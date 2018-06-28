@@ -1,0 +1,80 @@
+// Parent - Maze Generator
+
+ext {
+    workingTitle = "Maze Generator"
+	
+	gradleTarget = '4.8.1'
+	javaTarget = '1.8'
+	
+    jacksonTarget = '2.8.8'
+	
+    junitTarget = '4.12'
+    hamcrestTarget = '2.0.0.0'
+}
+
+apply plugin: 'base'
+
+allprojects {
+    apply plugin: "eclipse"
+    apply plugin: "jacoco"
+    
+    group = 'com.upseil.maze-generator'
+    version = '0.1.0'
+
+	buildscript {
+	    repositories {
+	        mavenLocal()
+	        mavenCentral()
+	        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	        jcenter()
+	    }
+	}
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+	sourceSets.main.java.srcDirs = [ "src/" ]
+	sourceSets.test.java.srcDirs = [ "test/" ]
+	
+	sourceCompatibility = "$javaTarget"
+	targetCompatibility = "$javaTarget"
+	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}
+
+task wrapper (type: Wrapper) {
+	group = 'help'
+	description = "Configures the wrapper for the target version $gradleTarget."
+	
+	gradleVersion = "$gradleTarget"
+}
+
+task testCoverage(type: JacocoReport, group:'verification') {
+	description 'Runs the unit tests and creates the coverage report.'
+	dependsOn subprojects*.test
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    // Add all relevant sourcesets from the subprojects 
+    subprojects.each {
+       sourceSets it.sourceSets.main
+    }
+
+    reports {
+		xml.enabled true
+		html.enabled true
+		html.destination file("${buildDir}/reports/jacoco")
+		csv.enabled false
+    }
+}

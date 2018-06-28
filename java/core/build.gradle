@@ -1,0 +1,10 @@
+// Core - Maze Generator
+
+dependencies {
+    testCompile "junit:junit:$junitTarget"
+    testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
+}
+
+eclipse.project {
+    name = workingTitle + "-Core"
+}
