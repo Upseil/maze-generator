@@ -19,18 +19,18 @@ import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
 import com.upseil.maze.domain.Maze;
 
-public class TestMaze {
+class TestMaze {
     
     private Maze maze;
     
     @BeforeEach
-    public void initializeMaze() {
+    void initializeMaze() {
         maze = MazeFactory.createFilled(2, 2, CellType.Floor);
         maze.setCell(0, 0, new Cell(0, 0, CellType.Wall));
     }
     
     @Test
-    public void testGetCell() {
+    void testGetCell() {
         Cell expectedCell = new Cell(0, 0, CellType.Wall);
         assertThat(maze.getCell(0, 0), is(expectedCell));
         
@@ -39,19 +39,19 @@ public class TestMaze {
     }
     
     @Test
-    public void testGetCellOutOfBounds() {
+    void testGetCellOutOfBounds() {
         assertThrows(IndexOutOfBoundsException.class, () -> maze.getCell(maze.getWidth(), 0));
         assertThrows(IndexOutOfBoundsException.class, () -> maze.getCell(-1, 0));
     }
     
     @Test
-    public void testIsInBounds() {
+    void testIsInBounds() {
         assertThat(maze.isInBounds(0, 1), is(true));
         assertThat(maze.isInBounds(-1, 1), is(false));
     }
     
     @Test
-    public void testGetNeighbour() {
+    void testGetNeighbour() {
         Cell expectedCell = new Cell(0, 1, CellType.Floor);
         assertThat(maze.getNeighbour(0, 0, Direction.North), is(expectedCell));
         
@@ -65,7 +65,7 @@ public class TestMaze {
     }
     
     @Test
-    public void testGetNeighbours() {
+    void testGetNeighbours() {
         Map<Direction, Cell> expectedNeighbours = new HashMap<>();
         expectedNeighbours.put(Direction.North,     new Cell(0, 1, CellType.Floor));
         expectedNeighbours.put(Direction.East,      new Cell(1, 0, CellType.Floor));
