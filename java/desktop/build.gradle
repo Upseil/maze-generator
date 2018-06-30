@@ -19,12 +19,27 @@ dependencies {
 }
 
 sourceSets {
-    main.resources.srcDirs = [ "internalResources/", "resources/" ]
+    main.resources.srcDirs = [ "internalResources/" ]
+    additional.resources.srcDirs = [ "resources/" ]
 }
 
 eclipse {
     project.name = workingTitle + '-Desktop'
-    classpath.containers 'org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER'
+    classpath {
+        containers 'org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER'
+        defaultOutputDir = file('build/eclipse/main')
+        file.whenMerged {
+            entries.each { source ->
+                if (source.kind == 'src' && !source.path.startsWith('/')) {
+                    if (source.path.equals('test')) {
+                        source.output = 'build/eclipse/test'
+                    } else {
+                        source.output = null
+                    }
+                }
+            }
+        }
+    }
 }
 
 

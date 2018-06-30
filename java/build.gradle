@@ -49,6 +49,19 @@ subprojects {
 	sourceCompatibility = "$javaTarget"
 	targetCompatibility = "$javaTarget"
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+	
+
+    eclipse {
+        classpath {
+            file.whenMerged {
+                entries.each { source ->
+                    if (source.kind == 'src' && !source.path.startsWith('/')) {
+                        source.output = "build/eclipse/${source.name}"
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.eclipse.doLast {
