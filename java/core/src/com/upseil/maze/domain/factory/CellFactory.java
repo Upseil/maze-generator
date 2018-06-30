@@ -5,6 +5,8 @@ import com.upseil.maze.domain.CellType;
 
 public interface CellFactory {
     
+    CellFactory Default = (x, y, t) -> new Cell(x, y, t);
+
     Cell create(int x, int y, CellType type);
     
 }

@@ -8,7 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,6 +89,29 @@ class TestMaze {
         assertThat(maze.getNeighbours(0, 1, Arrays.asList(Direction.East, Direction.SouthEast)), is(expectedNeighbours));
 
         assertThrows(IndexOutOfBoundsException.class, () -> maze.getNeighbours(-1, 0));
+    }
+    
+    @Test
+    void testIterator() {
+        maze.setCell(0, 0, null);
+        
+        Set<Cell> expectedCells = new HashSet<>();
+        for (int x = 0; x < maze.getWidth(); x++) {
+            for (int y = 0; y < maze.getHeight(); y++) {
+                Cell cell = maze.getCell(x, y);
+                if (cell != null) {
+                    expectedCells.add(cell);
+                }
+            }
+        }
+        Set<Cell> cells = StreamSupport.stream(maze.spliterator(), false).collect(Collectors.toSet());
+        assertThat(cells, is(expectedCells));
+        
+        Iterator<Cell> iterator = maze.iterator();
+        while (iterator.hasNext()) iterator.next();
+        assertThrows(IndexOutOfBoundsException.class, () -> iterator.next());
+        
+        assertThrows(UnsupportedOperationException.class, () -> maze.iterator().remove());
     }
     
 }

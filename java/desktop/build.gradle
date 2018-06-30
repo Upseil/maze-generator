@@ -22,7 +22,11 @@ sourceSets {
     main.resources.srcDirs = [ "internalResources/", "resources/" ]
 }
 
-eclipse.project.name = workingTitle + '-Desktop'
+eclipse {
+    project.name = workingTitle + '-Desktop'
+    classpath.containers 'org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER'
+}
+
 
 jfx {
     mainClass = 'com.upseil.maze.desktop.Launcher'

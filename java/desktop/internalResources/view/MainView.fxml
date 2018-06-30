@@ -2,10 +2,14 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import com.upseil.maze.desktop.Menu?>
+<?import com.upseil.maze.desktop.display.MazeView?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1">
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="BorderPane">
   <top>
-    <Menu />
+    <Menu fx:id="menu" />
   </top>
-</BorderPane>
+  <center>
+    <MazeView fx:id="mazeView" alignment="center" />
+  </center>
+</fx:root>
 

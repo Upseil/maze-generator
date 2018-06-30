@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 public class Launcher extends Application {
     
+    private static final Level LogLevel = Level.INFO;
     private static final String LogFile = "maze-generator.log";
     private static final String StylesheetFile = "style/default.css";
 
@@ -24,6 +25,7 @@ public class Launcher extends Application {
     
     public static void main(String[] args) throws IOException {
         Logger globalLogger = LogManager.getLogManager().getLogger("");
+        globalLogger.setLevel(LogLevel);
         FileHandler fileLogger;
         try {
             fileLogger = new FileHandler(LogFile);
@@ -49,13 +51,14 @@ public class Launcher extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        BorderPane root = resourceLoader.loadFXML("/view/MainView.fxml");
+        BorderPane root = new MainView();
         Scene scene = new Scene(root, 800, 800);
-        scene.getStylesheets().setAll(ResourceLoader.getResource(StylesheetFile).toExternalForm());
+        scene.getStylesheets().add(ResourceLoader.getResource(StylesheetFile).toExternalForm());
 
         primaryStage.setTitle(resourceLoader.getResourceBundle().getString("title"));
         primaryStage.setScene(scene);
         primaryStage.show();
+        
     }
     
     public static ResourceLoader getResourceLoader() {

@@ -1,11 +1,12 @@
 package com.upseil.maze.domain;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class Maze {
+public class Maze implements Iterable<Cell> {
     
     private static final Supplier<Map<Direction, Cell>> DefaultMapFactory = () -> new HashMap<>();
     private static final Predicate<Cell> DefaultPredicate = c -> true;
@@ -91,6 +92,11 @@ public class Maze {
     public int getHeight() {
         return cells[0].length;
     }
+    
+    @Override
+    public Iterator<Cell> iterator() {
+        return new MazeIterator();
+    }
 
     protected final Cell unsafeGet(int x, int y) {
         return cells[x][y];
@@ -105,6 +111,57 @@ public class Maze {
             throw new IndexOutOfBoundsException("The given coordinates are out of bounds: 0 <= " + x + " < " + getWidth() + " | "
                                                                                        + "0 <= " + y + " < " + getHeight());
         }
+    }
+    
+    private class MazeIterator implements Iterator<Cell> {
+        
+        private int x;
+        private int y;
+        
+        public MazeIterator() {
+            x = -1;
+            y = 0;
+            findNext();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return x >= 0 && y >= 0;
+        }
+
+        @Override
+        public Cell next() {
+            Cell current = unsafeGet(x, y);
+            findNext();
+            return current;
+        }
+
+        private void findNext() {
+            int width = getWidth();
+            int height = getHeight();
+            
+            boolean foundNext = false;
+            while (!foundNext) {
+                x++;
+                if (x >= width) {
+                    x = 0;
+                    y++;
+                    if (y >= height) {
+                        break;
+                    }
+                }
+                
+                if (unsafeGet(x, y) != null) {
+                    foundNext = true;
+                }
+            }
+            
+            if (!foundNext) {
+                x = -1;
+                y = -1;
+            }
+        }
+        
     }
     
 }
