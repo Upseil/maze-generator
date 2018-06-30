@@ -1,11 +1,11 @@
 package com.upseil.maze.domain.factory;
 
-import com.upseil.maze.domain.Maze;
+import com.upseil.maze.domain.SimpleMaze;
 
 public interface MazeFactory {
     
-    MazeFactory Default = (w, h) -> new Maze(w, h);
+    MazeFactory Default = (w, h) -> new SimpleMaze(w, h);
     
-    Maze create(int width, int height);
+    SimpleMaze create(int width, int height);
     
 }

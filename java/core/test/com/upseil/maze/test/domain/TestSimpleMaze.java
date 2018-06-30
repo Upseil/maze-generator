@@ -21,29 +21,30 @@ import org.junit.jupiter.api.Test;
 import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
-import com.upseil.maze.domain.Maze;
+import com.upseil.maze.domain.SimpleMaze;
+import com.upseil.maze.domain.SimpleCell;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.FilledMazeFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
 
-class TestMaze {
+class TestSimpleMaze {
     
     private static final MazeFactory Factory = new FilledMazeFactory(CellFactory.Default, CellType.Floor);
     
-    private Maze maze;
+    private SimpleMaze maze;
     
     @BeforeEach
     void initializeMaze() {
         maze = Factory.create(2, 2);
-        maze.setCell(0, 0, new Cell(0, 0, CellType.Wall));
+        maze.setCell(0, 0, new SimpleCell(0, 0, CellType.Wall));
     }
     
     @Test
     void testGetCell() {
-        Cell expectedCell = new Cell(0, 0, CellType.Wall);
+        Cell expectedCell = new SimpleCell(0, 0, CellType.Wall);
         assertThat(maze.getCell(0, 0), is(expectedCell));
         
-        expectedCell = new Cell(0, 1, CellType.Floor);
+        expectedCell = new SimpleCell(0, 1, CellType.Floor);
         assertThat(maze.getCell(0, 1), is(expectedCell));
     }
     
@@ -61,13 +62,13 @@ class TestMaze {
     
     @Test
     void testGetNeighbour() {
-        Cell expectedCell = new Cell(0, 1, CellType.Floor);
+        Cell expectedCell = new SimpleCell(0, 1, CellType.Floor);
         assertThat(maze.getNeighbour(0, 0, Direction.North), is(expectedCell));
         
-        expectedCell = new Cell(1, 0, CellType.Floor);
+        expectedCell = new SimpleCell(1, 0, CellType.Floor);
         assertThat(maze.getNeighbour(0, 0, Direction.East), is(expectedCell));
         
-        expectedCell = new Cell(1, 1, CellType.Floor);
+        expectedCell = new SimpleCell(1, 1, CellType.Floor);
         assertThat(maze.getNeighbour(0, 0, Direction.NorthEast), is(expectedCell));
         
         assertThat(maze.getNeighbour(0, 0, Direction.South), is(nullValue()));
@@ -76,9 +77,9 @@ class TestMaze {
     @Test
     void testGetNeighbours() {
         Map<Direction, Cell> expectedNeighbours = new HashMap<>();
-        expectedNeighbours.put(Direction.North,     new Cell(0, 1, CellType.Floor));
-        expectedNeighbours.put(Direction.East,      new Cell(1, 0, CellType.Floor));
-        expectedNeighbours.put(Direction.NorthEast, new Cell(1, 1, CellType.Floor));
+        expectedNeighbours.put(Direction.North,     new SimpleCell(0, 1, CellType.Floor));
+        expectedNeighbours.put(Direction.East,      new SimpleCell(1, 0, CellType.Floor));
+        expectedNeighbours.put(Direction.NorthEast, new SimpleCell(1, 1, CellType.Floor));
         assertThat(maze.getNeighbours(0, 0), is(expectedNeighbours));
         
         Map<Direction, Cell> neighbours = new HashMap<>();
@@ -87,8 +88,8 @@ class TestMaze {
         assertThat(neighbours, is(expectedNeighbours));
         
         expectedNeighbours.clear();
-        expectedNeighbours.put(Direction.SouthEast, new Cell(1, 0, CellType.Floor));
-        expectedNeighbours.put(Direction.East,      new Cell(1, 1, CellType.Floor));
+        expectedNeighbours.put(Direction.SouthEast, new SimpleCell(1, 0, CellType.Floor));
+        expectedNeighbours.put(Direction.East,      new SimpleCell(1, 1, CellType.Floor));
         assertThat(maze.getNeighbours(0, 1, c -> c.getType() == CellType.Floor), is(expectedNeighbours));
         assertThat(maze.getNeighbours(0, 1, Arrays.asList(Direction.East, Direction.SouthEast)), is(expectedNeighbours));
 

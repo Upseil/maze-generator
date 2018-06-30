@@ -1,7 +1,7 @@
 package com.upseil.maze.domain.factory;
 
 import com.upseil.maze.domain.CellType;
-import com.upseil.maze.domain.Maze;
+import com.upseil.maze.domain.SimpleMaze;
 
 public class FilledMazeFactory implements MazeFactory {
     
@@ -14,8 +14,8 @@ public class FilledMazeFactory implements MazeFactory {
     }
 
     @Override
-    public Maze create(int width, int height) {
-        Maze maze = new Maze(width, height);
+    public SimpleMaze create(int width, int height) {
+        SimpleMaze maze = new SimpleMaze(width, height);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 maze.setCell(x, y, cellFactory.create(x, y, cellType));

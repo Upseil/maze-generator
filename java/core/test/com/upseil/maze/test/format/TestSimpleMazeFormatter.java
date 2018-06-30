@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.upseil.maze.domain.Cell;
+import com.upseil.maze.domain.SimpleCell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
@@ -29,7 +29,7 @@ class TestSimpleMazeFormatter {
     
     @Test
     void testFormatSimpleMaze() {
-        maze.setCell(0, 0, new Cell(0, 0, CellType.Wall));
+        maze.setCell(0, 0, new SimpleCell(0, 0, CellType.Wall));
         
         String expectedString = "F F\nW F";
         assertThat(formatter.format(maze), is(expectedString));
@@ -37,12 +37,12 @@ class TestSimpleMazeFormatter {
     
     @Test
     void testFormatMazeWithCustomCellType() {
-        maze.setCell(0, 0, new Cell(0, 0, new CellType("Floor2")));
+        maze.setCell(0, 0, new SimpleCell(0, 0, new CellType("Floor2")));
         
         String expectedString = "F F\nF F";
         assertThat(formatter.format(maze), is(expectedString));
         
-        maze.setCell(0, 0, new Cell(0, 0, new CellType("Test")));
+        maze.setCell(0, 0, new SimpleCell(0, 0, new CellType("Test")));
         expectedString = "F F\nT F";
         assertThat(formatter.format(maze), is(expectedString));
     }
@@ -54,7 +54,7 @@ class TestSimpleMazeFormatter {
         String expectedString = "F F\n  F";
         assertThat(formatter.format(maze), is(expectedString));
         
-        maze.setCell(0, 0, new Cell(0, 0, new CellType("Test")));
+        maze.setCell(0, 0, new SimpleCell(0, 0, new CellType("Test")));
         expectedString = "F F\nT F";
         assertThat(formatter.format(maze), is(expectedString));
     }
