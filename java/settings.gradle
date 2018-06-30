@@ -1,3 +1,4 @@
 rootProject.name = 'maze-generator'
 
 include ":core"
+include ":desktop"

@@ -8,6 +8,4 @@ dependencies {
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitTarget"
 }
 
-eclipse.project {
-    name = workingTitle + "-Core"
-}
+eclipse.project.name = workingTitle + '-Core'

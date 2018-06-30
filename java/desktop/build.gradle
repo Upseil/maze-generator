@@ -1,0 +1,55 @@
+// Desktop - Maze Generator
+
+buildscript {
+    dependencies {
+        classpath "de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:$javaFXGradleTarget"
+    }
+}
+
+apply plugin: 'javafx-gradle-plugin'
+
+dependencies {
+	compile project(":core")
+
+    testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
+    
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitTarget"
+    testCompile "org.junit.platform:junit-platform-runner:$junitPlatformTarget"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitTarget"
+}
+
+sourceSets {
+    main.resources.srcDirs = [ "internalResources/", "resources/" ]
+}
+
+eclipse.project.name = workingTitle + '-Desktop'
+
+jfx {
+    mainClass = 'com.upseil.maze.desktop.Launcher'
+    jfxAppOutputDir = "${rootProject.buildDir}/jfx/app"
+    jfxMainAppJarName = "${rootProject.name}.jar"
+    deployDir = 'deploy'
+    useEnvironmentRelativeExecutables = true
+
+    // gradle jfxJar
+    css2bin = false
+    copyAdditionalAppResourcesToJar = true
+
+    // gradle jfxNative
+    vendor = 'Upseil'
+    nativeOutputDir = "${rootProject.buildDir}/jfx/native"
+    nativeReleaseVersion = "$version"
+    needShortcut = false
+    needMenu = false
+    appName = "${rootProject.name}" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/windows/project.ico"
+    additionalAppResources = 'resources'
+
+    // gradle jfxRun
+    runJavaParameter = null
+    runAppParameter = null
+
+    // to disable patching of ant-javafx.jar, set this to false
+    usePatchedJFXAntLib = true
+
+    checkForAbsolutePaths = true
+}
