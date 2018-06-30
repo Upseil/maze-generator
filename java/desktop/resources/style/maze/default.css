@@ -1,0 +1,7 @@
+.Floor {
+    -fx-background-color: #eee;
+}
+
+.Wall {
+    -fx-background-color: #333;
+}

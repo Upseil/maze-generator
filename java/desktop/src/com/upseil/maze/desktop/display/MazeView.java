@@ -1,7 +1,7 @@
 package com.upseil.maze.desktop.display;
 
 import com.upseil.maze.desktop.Launcher;
-import com.upseil.maze.domain.CellType;
+import com.upseil.maze.desktop.ResourceLoader;
 import com.upseil.maze.domain.Maze;
 
 import javafx.beans.binding.Bindings;
@@ -15,11 +15,15 @@ import javafx.scene.layout.Pane;
 
 public class MazeView extends GridPane {
     
+    private static final String DefaultStyle = "style/maze/default.css";
+    
     private final DoubleProperty cellSizeProperty;
     
     public MazeView() {
         cellSizeProperty = new SimpleDoubleProperty();
+        
         Launcher.getResourceLoader().loadFXML(this, this, "/view/maze/MazeView.fxml");
+        getStylesheets().add(ResourceLoader.getResource(DefaultStyle).toExternalForm());
     }
     
     @FXML
@@ -38,8 +42,7 @@ public class MazeView extends GridPane {
             Pane cellPane = new Pane();
             cellPane.prefWidthProperty().bind(cellSizeProperty);
             cellPane.prefHeightProperty().bind(cellSizeProperty);
-            String backgroundColor = cell.getType() == CellType.Floor ? "#fff" : "#000";
-            cellPane.setStyle("-fx-background-color: " + backgroundColor);
+            cellPane.getStyleClass().add(cell.getType().getName());
             add(cellPane, cell.getX(), height - cell.getY());
         });
     }
