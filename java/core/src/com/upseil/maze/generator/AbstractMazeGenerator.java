@@ -5,14 +5,17 @@ import java.util.Random;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
+import com.upseil.maze.domain.factory.MazeFactory;
 
 public abstract class AbstractMazeGenerator implements MazeGenerator {
     
     private final Random random;
+    private final MazeFactory mazeFactory;
     private final CellFactory cellFactory;
     
-    public AbstractMazeGenerator(Random random, CellFactory cellFactory) {
+    public AbstractMazeGenerator(Random random, MazeFactory mazeFactory, CellFactory cellFactory) {
         this.random = random;
+        this.mazeFactory = mazeFactory;
         this.cellFactory = cellFactory;
     }
     
@@ -27,6 +30,10 @@ public abstract class AbstractMazeGenerator implements MazeGenerator {
                 }
             }
         }
+    }
+    
+    protected MazeFactory getMazeFactory() {
+        return mazeFactory;
     }
     
     protected CellFactory getCellFactory() {

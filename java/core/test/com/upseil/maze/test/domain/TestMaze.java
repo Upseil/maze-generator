@@ -18,19 +18,23 @@ import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.upseil.maze.MazeFactory;
 import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
 import com.upseil.maze.domain.Maze;
+import com.upseil.maze.domain.factory.CellFactory;
+import com.upseil.maze.domain.factory.FilledMazeFactory;
+import com.upseil.maze.domain.factory.MazeFactory;
 
 class TestMaze {
+    
+    private static final MazeFactory Factory = new FilledMazeFactory(CellFactory.Default, CellType.Floor);
     
     private Maze maze;
     
     @BeforeEach
     void initializeMaze() {
-        maze = MazeFactory.createFilled(2, 2, CellType.Floor);
+        maze = Factory.create(2, 2);
         maze.setCell(0, 0, new Cell(0, 0, CellType.Wall));
     }
     

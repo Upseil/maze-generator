@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.upseil.maze.desktop.event.MazeGeneratedEvent;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
+import com.upseil.maze.domain.factory.MazeFactory;
 import com.upseil.maze.generator.BacktrackingLabyrinthGenerator;
 import com.upseil.maze.generator.MazeGenerator;
 
@@ -23,7 +24,7 @@ public class Menu extends MenuBar {
     public Menu() {
         Launcher.getResourceLoader().loadFXML(this, this, "/view/Menu.fxml");
         
-        generator = new BacktrackingLabyrinthGenerator(new Random(), CellFactory.Default);
+        generator = new BacktrackingLabyrinthGenerator(new Random(), MazeFactory.Default, CellFactory.Default);
     }
     
     @FXML

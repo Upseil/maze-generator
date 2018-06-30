@@ -12,19 +12,20 @@ import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
+import com.upseil.maze.domain.factory.MazeFactory;
 
 public class BacktrackingLabyrinthGenerator extends AbstractLabyrinthGenerator {
     
     private final Collection<Direction> directions;
     
-    public BacktrackingLabyrinthGenerator(Random random, CellFactory cellFactory) {
-        super(random, cellFactory);
+    public BacktrackingLabyrinthGenerator(Random random, MazeFactory mazeFactory, CellFactory cellFactory) {
+        super(random, mazeFactory, cellFactory);
         directions = Arrays.asList(Direction.North, Direction.East, Direction.South, Direction.West);
     }
 
     @Override
     public Maze generate(int width, int height) {
-        Maze maze = new Maze(width, height);
+        Maze maze = getMazeFactory().create(width, height);
         
         List<Visit> visits = new ArrayList<>((int) (width * height * 0.25));
         visits.add(new Visit(randomInt(width), randomInt(height)));
