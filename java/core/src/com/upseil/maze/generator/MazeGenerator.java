@@ -1,9 +1,10 @@
 package com.upseil.maze.generator;
 
+import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.Maze;
 
-public interface MazeGenerator {
+public interface MazeGenerator<M extends Maze<C>, C extends Cell> {
     
-    Maze generate(int width, int height);
+    M generate(int width, int height);
     
 }

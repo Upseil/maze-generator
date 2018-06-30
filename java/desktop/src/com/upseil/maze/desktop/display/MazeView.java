@@ -34,7 +34,7 @@ public class MazeView extends GridPane {
         );
     }
     
-    private void displayMaze(Maze maze) {
+    private void displayMaze(Maze<?> maze) {
         getChildren().clear();
         
         int height = maze.getHeight() - 1;
@@ -47,20 +47,20 @@ public class MazeView extends GridPane {
         });
     }
 
-    private final ObjectProperty<Maze> mazeProperty = new SimpleObjectProperty<Maze>(this, "maze") {
+    private final ObjectProperty<Maze<?>> mazeProperty = new SimpleObjectProperty<Maze<?>>(this, "maze") {
         @Override
         protected void invalidated() {
             displayMaze(get());
         };
     };
     
-    public ObjectProperty<Maze> mazeProperty() {
+    public ObjectProperty<Maze<?>> mazeProperty() {
         return mazeProperty;
     }
-    public void setMaze(Maze maze) {
+    public void setMaze(Maze<?> maze) {
         mazeProperty.set(maze);
     }
-    public Maze getMaze() {
+    public Maze<?> getMaze() {
         return mazeProperty.get();
     }
     

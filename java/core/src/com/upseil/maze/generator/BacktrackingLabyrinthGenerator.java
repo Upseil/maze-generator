@@ -8,24 +8,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
 
-public class BacktrackingLabyrinthGenerator extends AbstractLabyrinthGenerator {
+public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> extends AbstractLabyrinthGenerator<M, C> {
     
     private final Collection<Direction> directions;
     
-    public BacktrackingLabyrinthGenerator(Random random, MazeFactory mazeFactory, CellFactory cellFactory) {
+    public BacktrackingLabyrinthGenerator(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
         super(random, mazeFactory, cellFactory);
         directions = Arrays.asList(Direction.North, Direction.East, Direction.South, Direction.West);
     }
 
     @Override
-    public Maze generate(int width, int height) {
-        Maze maze = getMazeFactory().create(width, height);
+    public M generate(int width, int height) {
+        M maze = getMazeFactory().create(width, height);
         
         List<Visit> visits = new ArrayList<>((int) (width * height * 0.25));
         visits.add(new Visit(randomInt(width), randomInt(height)));
@@ -55,7 +56,7 @@ public class BacktrackingLabyrinthGenerator extends AbstractLabyrinthGenerator {
         return maze;
     }
 
-    private void visitCell(Maze maze, Visit visit) {
+    private void visitCell(M maze, Visit visit) {
         int x = visit.getX();
         int y = visit.getY();
         if (maze.getCell(x, y) == null) {
@@ -63,7 +64,7 @@ public class BacktrackingLabyrinthGenerator extends AbstractLabyrinthGenerator {
         }
     }
 
-    private void setToFloor(Maze maze, int x, int y) {
+    private void setToFloor(M maze, int x, int y) {
         maze.setCell(x, y, getCellFactory().create(x, y, CellType.Floor));
     }
     

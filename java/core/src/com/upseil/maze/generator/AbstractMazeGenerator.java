@@ -2,24 +2,25 @@ package com.upseil.maze.generator;
 
 import java.util.Random;
 
+import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
 
-public abstract class AbstractMazeGenerator implements MazeGenerator {
+public abstract class AbstractMazeGenerator<M extends Maze<C>, C extends Cell> implements MazeGenerator<M, C> {
     
     private final Random random;
-    private final MazeFactory mazeFactory;
-    private final CellFactory cellFactory;
+    private final MazeFactory<M, C> mazeFactory;
+    private final CellFactory<C> cellFactory;
     
-    public AbstractMazeGenerator(Random random, MazeFactory mazeFactory, CellFactory cellFactory) {
+    public AbstractMazeGenerator(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
         this.random = random;
         this.mazeFactory = mazeFactory;
         this.cellFactory = cellFactory;
     }
     
-    protected void fillRemainingCells(Maze maze, CellType type) {
+    protected void fillRemainingCells(M maze, CellType type) {
         int width = maze.getWidth();
         int height = maze.getHeight();
         
@@ -32,11 +33,11 @@ public abstract class AbstractMazeGenerator implements MazeGenerator {
         }
     }
     
-    protected MazeFactory getMazeFactory() {
+    protected MazeFactory<M, C> getMazeFactory() {
         return mazeFactory;
     }
     
-    protected CellFactory getCellFactory() {
+    protected CellFactory<C> getCellFactory() {
         return cellFactory;
     }
     

@@ -19,17 +19,17 @@ public class Menu extends MenuBar {
     
     private static final Logger logger = Logger.getLogger(Menu.class.getName());
     
-    private final MazeGenerator generator;
+    private final MazeGenerator<?, ?> generator;
     
     public Menu() {
         Launcher.getResourceLoader().loadFXML(this, this, "/view/Menu.fxml");
         
-        generator = new BacktrackingLabyrinthGenerator(new Random(), MazeFactory.Default, CellFactory.Default);
+        generator = new BacktrackingLabyrinthGenerator<>(new Random(), MazeFactory.Default, CellFactory.Default);
     }
     
     @FXML
     private void generate() {
-        Maze maze = generator.generate(15, 15);
+        Maze<?> maze = generator.generate(15, 15);
         this.fireEvent(new MazeGeneratedEvent(maze));
     }
 

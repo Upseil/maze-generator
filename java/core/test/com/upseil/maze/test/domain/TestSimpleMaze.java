@@ -21,17 +21,17 @@ import org.junit.jupiter.api.Test;
 import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
-import com.upseil.maze.domain.SimpleMaze;
 import com.upseil.maze.domain.SimpleCell;
+import com.upseil.maze.domain.GenericMaze;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.FilledMazeFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
 
 class TestSimpleMaze {
     
-    private static final MazeFactory Factory = new FilledMazeFactory(CellFactory.Default, CellType.Floor);
+    private static final MazeFactory<GenericMaze<Cell>, Cell> Factory = new FilledMazeFactory<>((w, h) -> new GenericMaze<>(w, h), CellFactory.Default, CellType.Floor);
     
-    private SimpleMaze maze;
+    private GenericMaze<Cell> maze;
     
     @BeforeEach
     void initializeMaze() {

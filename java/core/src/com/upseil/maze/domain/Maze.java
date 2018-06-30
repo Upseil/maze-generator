@@ -3,20 +3,20 @@ package com.upseil.maze.domain;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public interface Maze extends Iterable<Cell> {
+public interface Maze<C extends Cell> extends Iterable<C> {
     
-    Cell getCell(int x, int y);
-    void setCell(int x, int y, Cell cell);
+    C getCell(int x, int y);
+    void setCell(int x, int y, C cell);
     
-    Cell getNeighbour(int x, int y, Direction direction);
+    C getNeighbour(int x, int y, Direction direction);
     
-    Map<Direction, Cell> getNeighbours(int x, int y);
-    Map<Direction, Cell> getNeighbours(int x, int y, Map<Direction, Cell> result);
-    Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions);
-    Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Map<Direction, Cell> result);
-    Map<Direction, Cell> getNeighbours(int x, int y, Predicate<Cell> predicate);
-    Map<Direction, Cell> getNeighbours(int x, int y, Predicate<Cell> predicate, Map<Direction, Cell> result);
-    Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<Cell> predicate, Map<Direction, Cell> result);
+    Map<Direction, C> getNeighbours(int x, int y);
+    Map<Direction, C> getNeighbours(int x, int y, Map<Direction, C> result);
+    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions);
+    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Map<Direction, C> result);
+    Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate);
+    Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate, Map<Direction, C> result);
+    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super C> predicate, Map<Direction, C> result);
     
     int getWidth();
     int getHeight();

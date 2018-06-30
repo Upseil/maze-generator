@@ -6,31 +6,31 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class SimpleMaze implements Maze {
+public class GenericMaze<C extends Cell> implements Maze<C> {
     
-    private static final Supplier<Map<Direction, Cell>> DefaultMapFactory = () -> new HashMap<>();
-    private static final Predicate<Cell> DefaultPredicate = c -> true;
+    private static final Predicate<Object> DefaultPredicate = c -> true;
     
-    private final Cell[][] cells;
-    private final Supplier<Map<Direction, Cell>> mapFactory;
+    private final C[][] cells;
+    private final Supplier<Map<Direction, C>> mapFactory;
     
-    public SimpleMaze(int width, int height) {
-        this(width, height, DefaultMapFactory);
+    public GenericMaze(int width, int height) {
+        this(width, height, () -> new HashMap<>());
     }
 
-    public SimpleMaze(int width, int height, Supplier<Map<Direction, Cell>> mapFactory) {
-        cells = new Cell[width][height];
+    @SuppressWarnings("unchecked")
+    public GenericMaze(int width, int height, Supplier<Map<Direction, C>> mapFactory) {
+        cells = (C[][]) new Cell[width][height];
         this.mapFactory = mapFactory;
     }
     
     @Override
-    public Cell getCell(int x, int y) {
+    public C getCell(int x, int y) {
         validateCoordinates(x, y);
         return unsafeGet(x, y);
     }
     
     @Override
-    public Cell getNeighbour(int x, int y, Direction direction) {
+    public C getNeighbour(int x, int y, Direction direction) {
         validateCoordinates(x, y);
         
         int neighbourX = x + direction.getDeltaX();
@@ -39,44 +39,44 @@ public class SimpleMaze implements Maze {
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y) {
+    public Map<Direction, C> getNeighbours(int x, int y) {
         return getNeighbours(x, y, Direction.iterable(), DefaultPredicate, mapFactory.get());
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y, Map<Direction, Cell> result) {
+    public Map<Direction, C> getNeighbours(int x, int y, Map<Direction, C> result) {
         return getNeighbours(x, y, Direction.iterable(), DefaultPredicate, result);
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions) {
+    public Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions) {
         return getNeighbours(x, y, directions, DefaultPredicate, mapFactory.get());
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Map<Direction, Cell> result) {
+    public Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Map<Direction, C> result) {
         return getNeighbours(x, y, directions, DefaultPredicate, result);
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y, Predicate<Cell> predicate) {
+    public Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate) {
         return getNeighbours(x, y, Direction.iterable(), predicate, mapFactory.get());
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y, Predicate<Cell> predicate, Map<Direction, Cell> result) {
+    public Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate, Map<Direction, C> result) {
         return getNeighbours(x, y, Direction.iterable(), predicate, result);
     }
     
     @Override
-    public Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<Cell> predicate, Map<Direction, Cell> result) {
+    public Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super C> predicate, Map<Direction, C> result) {
         validateCoordinates(x, y);
         
         for (Direction direction : directions) {
             int neighbourX = x + direction.getDeltaX();
             int neighbourY = y + direction.getDeltaY();
             if (isInBounds(neighbourX, neighbourY)) {
-                Cell neighbour = unsafeGet(neighbourX, neighbourY);
+                C neighbour = unsafeGet(neighbourX, neighbourY);
                 if (predicate.test(neighbour)) {
                     result.put(direction, neighbour);
                 }
@@ -86,7 +86,7 @@ public class SimpleMaze implements Maze {
     }
 
     @Override
-    public void setCell(int x, int y, Cell cell) {
+    public void setCell(int x, int y, C cell) {
         validateCoordinates(x, y);
         unsafeSet(x, y, cell);
     }
@@ -107,15 +107,15 @@ public class SimpleMaze implements Maze {
     }
     
     @Override
-    public Iterator<Cell> iterator() {
+    public Iterator<C> iterator() {
         return new MazeIterator();
     }
 
-    protected final Cell unsafeGet(int x, int y) {
+    protected final C unsafeGet(int x, int y) {
         return cells[x][y];
     }
 
-    protected final void unsafeSet(int x, int y, Cell cell) {
+    protected final void unsafeSet(int x, int y, C cell) {
         cells[x][y] = cell;
     }
 
@@ -126,7 +126,7 @@ public class SimpleMaze implements Maze {
         }
     }
     
-    private class MazeIterator implements Iterator<Cell> {
+    private class MazeIterator implements Iterator<C> {
         
         private int x;
         private int y;
@@ -143,8 +143,8 @@ public class SimpleMaze implements Maze {
         }
 
         @Override
-        public Cell next() {
-            Cell current = unsafeGet(x, y);
+        public C next() {
+            C current = unsafeGet(x, y);
             findNext();
             return current;
         }

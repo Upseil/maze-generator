@@ -6,9 +6,10 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.upseil.maze.domain.SimpleCell;
+import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Maze;
+import com.upseil.maze.domain.SimpleCell;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.FilledMazeFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
@@ -16,10 +17,10 @@ import com.upseil.maze.format.SimpleMazeFormatter;
 
 class TestSimpleMazeFormatter {
     
-    private static final MazeFactory Factory = new FilledMazeFactory(CellFactory.Default, CellType.Floor);
+    private static final MazeFactory<Maze<Cell>, Cell> Factory = new FilledMazeFactory<>(MazeFactory.Default, CellFactory.Default, CellType.Floor);
     
     private SimpleMazeFormatter formatter;
-    private Maze maze;
+    private Maze<Cell> maze;
     
     @BeforeEach
     void initiliaze() {

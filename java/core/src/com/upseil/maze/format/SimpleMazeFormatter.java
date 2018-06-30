@@ -3,7 +3,7 @@ package com.upseil.maze.format;
 import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.Maze;
 
-public class SimpleMazeFormatter implements MazeFormatter {
+public class SimpleMazeFormatter implements MazeFormatter<Maze<Cell>, Cell> {
     
     private String cellDelimiter;
     private char nullCellSign;
@@ -26,7 +26,7 @@ public class SimpleMazeFormatter implements MazeFormatter {
     }
 
     @Override
-    public String format(Maze maze) {
+    public String format(Maze<Cell> maze) {
         StringBuilder builder = new StringBuilder();
         for (int y = maze.getHeight() - 1; y >= 0; y--) {
             for (int x = 0; x < maze.getWidth(); x++) {
