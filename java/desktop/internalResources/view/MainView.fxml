@@ -2,7 +2,7 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import com.upseil.maze.desktop.Menu?>
-<?import com.upseil.maze.desktop.display.MazeView?>
+<?import com.upseil.maze.desktop.display.GridPaneMazeView?>
 <?import com.upseil.maze.desktop.definition.GeneratorDefinitionView?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="BorderPane">
@@ -11,7 +11,7 @@
   </left>
   
   <center>
-    <MazeView fx:id="mazeView" alignment="center" />
+    <GridPaneMazeView fx:id="mazeView" alignment="center" />
   </center>
 </fx:root>
 
