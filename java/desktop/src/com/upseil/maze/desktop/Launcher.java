@@ -52,7 +52,7 @@ public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new MainView();
-        Scene scene = new Scene(root, 800, 800);
+        Scene scene = new Scene(root, 1200, 800);
         scene.getStylesheets().add(ResourceLoader.getResource(StylesheetFile).toExternalForm());
 
         primaryStage.setTitle(resourceLoader.getResourceBundle().getString("title"));

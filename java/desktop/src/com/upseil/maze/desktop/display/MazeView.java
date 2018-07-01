@@ -2,6 +2,7 @@ package com.upseil.maze.desktop.display;
 
 import com.upseil.maze.desktop.Launcher;
 import com.upseil.maze.desktop.ResourceLoader;
+import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.Maze;
 
 import javafx.beans.binding.Bindings;
@@ -24,6 +25,7 @@ public class MazeView extends GridPane {
         
         Launcher.getResourceLoader().loadFXML(this, this, "/view/maze/MazeView.fxml");
         getStylesheets().add(ResourceLoader.getResource(DefaultStyle).toExternalForm());
+        getStyleClass().add("background");
     }
     
     @FXML
@@ -36,15 +38,20 @@ public class MazeView extends GridPane {
     
     private void displayMaze(Maze<?> maze) {
         getChildren().clear();
-        
         int height = maze.getHeight() - 1;
-        maze.forEach(cell -> {
-            Pane cellPane = new Pane();
-            cellPane.prefWidthProperty().bind(cellSizeProperty);
-            cellPane.prefHeightProperty().bind(cellSizeProperty);
-            cellPane.getStyleClass().add(cell.getType().getName());
-            add(cellPane, cell.getX(), height - cell.getY());
-        });
+        maze.forEachPoint((x, y) -> add(createCellWidget(maze, x, y), x, height - y));
+    }
+
+    private Pane createCellWidget(Maze<?> maze, int x, int y) {
+        Pane cellPane = new Pane();
+        cellPane.prefWidthProperty().bind(cellSizeProperty);
+        cellPane.prefHeightProperty().bind(cellSizeProperty);
+        
+        Cell cell = maze.getCell(x, y);
+        String styleClass = cell == null ? "Empty" : cell.getType().getName();
+        cellPane.getStyleClass().add(styleClass);
+        
+        return cellPane;
     }
 
     private final ObjectProperty<Maze<?>> mazeProperty = new SimpleObjectProperty<Maze<?>>(this, "maze") {

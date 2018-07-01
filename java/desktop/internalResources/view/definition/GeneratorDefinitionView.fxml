@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import com.upseil.maze.desktop.controls.IntegerField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import com.upseil.maze.desktop.controls.LongField?>
+
+<fx:root xmlns:fx="http://javafx.com/fxml/1" type="VBox" spacing="10">
+  <padding>
+    <Insets top="5" left="5" bottom="5" right="5" />
+  </padding>
+
+  <TitledPane text="%generator" collapsible="false">
+    <GridPane hgap="5" vgap="5">
+      <ComboBox fx:id="generatorSelector" editable="false" GridPane.hgrow="ALWAYS" maxWidth="Infinity"
+                GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3" />
+                
+      <HBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3" alignment="CENTER_LEFT" >
+        <Label text="%seed" />
+        <LongField fx:id="seedField" promptText="%random" HBox.hgrow="ALWAYS" onAction="#generateMaze" />
+        <Button text="%fix" onAction="#fixSeed" />
+      </HBox>
+                
+      <IntegerField fx:id="widthField" lowerBound="5" promptText="%width" alignment="BASELINE_RIGHT" onAction="#generateMaze"
+                    GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" />
+      <Label text="x" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <IntegerField fx:id="heightField" lowerBound="5" promptText="%height" onAction="#generateMaze"
+                    GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" />
+    </GridPane>
+  </TitledPane>
+  
+  <Button fx:id="generateButton" text="%generate" onAction="#generateMaze" VBox.vgrow="ALWAYS" maxWidth="Infinity" />
+</fx:root>
+
