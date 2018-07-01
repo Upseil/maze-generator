@@ -14,13 +14,16 @@ import com.upseil.maze.domain.Direction;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
+import com.upseil.maze.modifier.MazeFiller;
 
 public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> extends AbstractLabyrinthGenerator<M, C> {
     
+    private final MazeFiller<M, C> mazeFiller;
     private final Collection<Direction> directions;
     
     public BacktrackingLabyrinthGenerator(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
         super(random, mazeFactory, cellFactory);
+        mazeFiller = new MazeFiller<>(cellFactory, CellType.Wall);
         directions = Arrays.asList(Direction.North, Direction.East, Direction.South, Direction.West);
     }
 
@@ -52,8 +55,7 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
             }
         }
         
-        fillRemainingCells(maze, CellType.Wall);
-        return maze;
+        return mazeFiller.modify(maze);
     }
 
     private void visitCell(M maze, Visit visit) {

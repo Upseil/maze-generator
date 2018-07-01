@@ -18,30 +18,27 @@ import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
 import com.upseil.maze.domain.Direction;
 import com.upseil.maze.domain.SimpleCell;
-import com.upseil.maze.domain.GenericMaze;
-import com.upseil.maze.domain.factory.CellFactory;
-import com.upseil.maze.domain.factory.FilledMazeFactory;
-import com.upseil.maze.domain.factory.MazeFactory;
+import com.upseil.maze.domain.SimpleMaze;
+import com.upseil.maze.modifier.MazeFiller;
 
 class TestSimpleMaze {
     
-    private static final MazeFactory<GenericMaze<Cell>, Cell> Factory = new FilledMazeFactory<>((w, h) -> new GenericMaze<>(w, h), CellFactory.Default, CellType.Floor);
+    private static final MazeFiller<SimpleMaze, SimpleCell> Filler = new MazeFiller<>((x, y, t) -> new SimpleCell(x, y, t), CellType.Floor);
     
-    private GenericMaze<Cell> maze;
+    private SimpleMaze maze;
     
     @BeforeEach
     void initializeMaze() {
-        maze = Factory.create(2, 2);
+        maze = Filler.modify(new SimpleMaze(2, 2));
         maze.setCell(0, 0, new SimpleCell(0, 0, CellType.Wall));
     }
     
     @Test
     void testGetCell() {
-        Cell expectedCell = new SimpleCell(0, 0, CellType.Wall);
+        SimpleCell expectedCell = new SimpleCell(0, 0, CellType.Wall);
         assertThat(maze.getCell(0, 0), is(expectedCell));
         
         expectedCell = new SimpleCell(0, 1, CellType.Floor);
@@ -62,7 +59,7 @@ class TestSimpleMaze {
     
     @Test
     void testGetNeighbour() {
-        Cell expectedCell = new SimpleCell(0, 1, CellType.Floor);
+        SimpleCell expectedCell = new SimpleCell(0, 1, CellType.Floor);
         assertThat(maze.getNeighbour(0, 0, Direction.North), is(expectedCell));
         
         expectedCell = new SimpleCell(1, 0, CellType.Floor);
@@ -76,14 +73,14 @@ class TestSimpleMaze {
     
     @Test
     void testGetNeighbours() {
-        Map<Direction, Cell> expectedNeighbours = new HashMap<>();
+        Map<Direction, SimpleCell> expectedNeighbours = new HashMap<>();
         expectedNeighbours.put(Direction.North,     new SimpleCell(0, 1, CellType.Floor));
         expectedNeighbours.put(Direction.East,      new SimpleCell(1, 0, CellType.Floor));
         expectedNeighbours.put(Direction.NorthEast, new SimpleCell(1, 1, CellType.Floor));
         assertThat(maze.getNeighbours(0, 0), is(expectedNeighbours));
         
-        Map<Direction, Cell> neighbours = new HashMap<>();
-        Map<Direction, Cell> returnedNeighbours = maze.getNeighbours(0, 0, neighbours);
+        Map<Direction, SimpleCell> neighbours = new HashMap<>();
+        Map<Direction, SimpleCell> returnedNeighbours = maze.getNeighbours(0, 0, neighbours);
         assertThat(returnedNeighbours, is(sameInstance(neighbours)));
         assertThat(neighbours, is(expectedNeighbours));
         
@@ -100,19 +97,19 @@ class TestSimpleMaze {
     void testIterator() {
         maze.setCell(0, 0, null);
         
-        Set<Cell> expectedCells = new HashSet<>();
+        Set<SimpleCell> expectedCells = new HashSet<>();
         for (int x = 0; x < maze.getWidth(); x++) {
             for (int y = 0; y < maze.getHeight(); y++) {
-                Cell cell = maze.getCell(x, y);
+                SimpleCell cell = maze.getCell(x, y);
                 if (cell != null) {
                     expectedCells.add(cell);
                 }
             }
         }
-        Set<Cell> cells = StreamSupport.stream(maze.spliterator(), false).collect(Collectors.toSet());
+        Set<SimpleCell> cells = StreamSupport.stream(maze.spliterator(), false).collect(Collectors.toSet());
         assertThat(cells, is(expectedCells));
         
-        Iterator<Cell> iterator = maze.iterator();
+        Iterator<SimpleCell> iterator = maze.iterator();
         while (iterator.hasNext()) iterator.next();
         assertThrows(IndexOutOfBoundsException.class, () -> iterator.next());
         

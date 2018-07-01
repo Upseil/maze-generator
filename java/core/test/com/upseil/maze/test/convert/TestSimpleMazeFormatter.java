@@ -9,15 +9,15 @@ import org.junit.jupiter.api.Test;
 import com.upseil.maze.convert.SimpleMazeFormatter;
 import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.CellType;
+import com.upseil.maze.domain.GenericMaze;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.SimpleCell;
 import com.upseil.maze.domain.factory.CellFactory;
-import com.upseil.maze.domain.factory.FilledMazeFactory;
-import com.upseil.maze.domain.factory.MazeFactory;
+import com.upseil.maze.modifier.MazeFiller;
 
 class TestSimpleMazeFormatter {
     
-    private static final MazeFactory<Maze<Cell>, Cell> Factory = new FilledMazeFactory<>(MazeFactory.Default, CellFactory.Default, CellType.Floor);
+    private static final MazeFiller<Maze<Cell>, Cell> Filler = new MazeFiller<>(CellFactory.Default, CellType.Floor);
     
     private SimpleMazeFormatter formatter;
     private Maze<Cell> maze;
@@ -25,7 +25,7 @@ class TestSimpleMazeFormatter {
     @BeforeEach
     void initiliaze() {
         formatter = new SimpleMazeFormatter();
-        maze = Factory.create(2, 2);
+        maze = Filler.modify(new GenericMaze<>(2, 2));
     }
     
     @Test

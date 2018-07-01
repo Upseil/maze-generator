@@ -3,6 +3,8 @@ package com.upseil.maze.domain;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.upseil.maze.function.IntIntConsumer;
+
 public interface Maze<C extends Cell> extends Iterable<C> {
     
     C getCell(int x, int y);
@@ -21,5 +23,15 @@ public interface Maze<C extends Cell> extends Iterable<C> {
     int getWidth();
     int getHeight();
     boolean isInBounds(int x, int y);
+    
+    default void forEachPoint(IntIntConsumer consumer) {
+        int width = getWidth();
+        int height = getHeight();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                consumer.accept(x, y);
+            }
+        }
+    }
     
 }
