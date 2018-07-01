@@ -2,8 +2,11 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import com.upseil.maze.desktop.Menu?>
-<?import com.upseil.maze.desktop.display.GridPaneMazeView?>
+<?import com.upseil.maze.desktop.display.ImageMazeView?>
 <?import com.upseil.maze.desktop.definition.GeneratorDefinitionView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import com.upseil.maze.desktop.display.CanvasMazeView?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="BorderPane">
   <left>
@@ -11,7 +14,10 @@
   </left>
   
   <center>
-    <GridPaneMazeView fx:id="mazeView" alignment="center" />
+<!--     <StackPane fx:id="mazeViewContainer" styleClass="maze-view" alignment="CENTER"> -->
+<!--       <ImageMazeView fx:id="mazeView" preserveRatio="true" smooth="false" /> -->
+<!--     </StackPane> -->
+    <CanvasMazeView fx:id="mazeView" styleClass="maze-view" />
   </center>
 </fx:root>
 

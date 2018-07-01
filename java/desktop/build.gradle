@@ -60,7 +60,7 @@ jfx {
     nativeReleaseVersion = "$version"
     needShortcut = false
     needMenu = false
-    appName = "${rootProject.name}" // this is used for files below "src/main/deploy", e.g. "src/main/deploy/windows/project.ico"
+    appName = "${rootProject.name}" // this is used for files below "deploy/"
     additionalAppResources = 'resources'
 
     // gradle jfxRun

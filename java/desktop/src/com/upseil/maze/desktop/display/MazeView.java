@@ -6,6 +6,8 @@ import javafx.beans.property.ObjectProperty;
 
 public interface MazeView {
     
+    final String DefaultStyle = "style/maze/default.css";
+    
     ObjectProperty<Maze<?>> mazeProperty();
     
     void setMaze(Maze<?> maze);
