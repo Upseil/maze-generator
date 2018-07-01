@@ -1,4 +1,4 @@
-package com.upseil.maze.format;
+package com.upseil.maze.convert;
 
 import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.Maze;
@@ -26,7 +26,7 @@ public class SimpleMazeFormatter implements MazeFormatter<Maze<Cell>, Cell> {
     }
 
     @Override
-    public String format(Maze<Cell> maze) {
+    public String convert(Maze<Cell> maze) {
         StringBuilder builder = new StringBuilder();
         for (int y = maze.getHeight() - 1; y >= 0; y--) {
             for (int x = 0; x < maze.getWidth(); x++) {
