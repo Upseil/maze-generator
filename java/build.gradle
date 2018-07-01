@@ -4,7 +4,7 @@ ext {
     workingTitle = "Maze Generator"
 	
 	gradleTarget = '4.8.1'
-	javaTarget = '1.8'
+	javaTarget = '10'
 	javaFXGradleTarget = '8.8.2'
 	
     jacksonTarget = '2.8.8'
