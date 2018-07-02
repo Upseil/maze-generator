@@ -20,8 +20,7 @@ public class CssBasedColorMap extends MazeColorMap {
     
     private static final String BackgroundPropertyName = "-fx-background-color";
 
-    public CssBasedColorMap(URL stylesheetUrl, Color defaultColor, Color unknownColor) {
-        super(defaultColor, unknownColor);
+    public CssBasedColorMap(URL stylesheetUrl) {
         CSSParser parser = new CSSParser();
         try {
             Stylesheet stylesheet = parser.parse(stylesheetUrl);

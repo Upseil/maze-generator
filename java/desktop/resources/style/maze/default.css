@@ -1,4 +1,10 @@
-.Empty {
+/* Maze View - Default Style */
+
+.Unknown {
+    -fx-background-color: #f00;
+}
+
+.Default {
     -fx-background-color: transparent;
 }
 

@@ -2,22 +2,22 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import com.upseil.maze.desktop.Menu?>
-<?import com.upseil.maze.desktop.display.ImageMazeView?>
 <?import com.upseil.maze.desktop.definition.GeneratorDefinitionView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import com.upseil.maze.desktop.display.GridPaneMazeView?>
+<?import com.upseil.maze.desktop.display.ImageMazeView?>
 <?import com.upseil.maze.desktop.display.CanvasMazeView?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="BorderPane">
   <left>
-    <GeneratorDefinitionView prefWidth="400" />
+    <GeneratorDefinitionView prefWidth="400" minWidth="400" maxWidth="400" />
   </left>
   
   <center>
-<!--     <StackPane fx:id="mazeViewContainer" styleClass="maze-view" alignment="CENTER"> -->
-<!--       <ImageMazeView fx:id="mazeView" preserveRatio="true" smooth="false" /> -->
-<!--     </StackPane> -->
+<!--     <GridPaneMazeView fx:id="mazeView" styleClass="maze-view" alignment="CENTER" /> -->
     <CanvasMazeView fx:id="mazeView" styleClass="maze-view" />
+<!--     <ImageMazeView fx:id="mazeView" styleClass="maze-view" /> -->
   </center>
 </fx:root>
 

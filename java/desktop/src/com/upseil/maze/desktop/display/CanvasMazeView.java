@@ -13,18 +13,14 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class CanvasMazeView extends StackPane implements MazeView {
-    
-    private static final Color DefaultColor = Color.TRANSPARENT;
-    private static final Color UnknownColor = Color.RED;
     
     private final MazeColorMap colorMap;
     private final Canvas canvas;
     
     public CanvasMazeView() {
-        colorMap = new CssBasedColorMap(ResourceLoader.getResource(DefaultStyle), DefaultColor, UnknownColor);
+        colorMap = new CssBasedColorMap(ResourceLoader.getResource(DefaultStyle));
 
         canvas = new Canvas();
         ObservableValue<Number> scaling = Bindings.min(widthProperty().divide(canvas.widthProperty()), heightProperty().divide(canvas.heightProperty()));
@@ -33,43 +29,50 @@ public class CanvasMazeView extends StackPane implements MazeView {
         
         setAlignment(Pos.CENTER);
         getChildren().add(canvas);
+
+        widthProperty().addListener((o, oV, nV) -> sizeChanged());
+        heightProperty().addListener((o, oV, nV) -> sizeChanged());
+    }
+    
+    private void sizeChanged() {
+        if (getMaze() != null) {
+            renderMaze();
+        }
     }
 
-    private void displayMaze(Maze<?> maze) {
+    private void renderMaze() {
+        Maze<?> maze = getMaze();
+        int mazeWidth = maze.getWidth();
+        int mazeHeight = maze.getHeight();
+        double cellScale = Math.floor(Math.min(getWidth() / mazeWidth, getHeight() / mazeHeight));
+        double canvasWidth = mazeWidth * cellScale;
+        double canvasHeight = mazeHeight * cellScale;
+        
         GraphicsContext context = canvas.getGraphicsContext2D();
         context.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        if (canvas.getWidth() != maze.getWidth()) {
-            canvas.setWidth(maze.getWidth());
+        if (canvas.getWidth() != canvasWidth) {
+            canvas.setWidth(canvasWidth);
         }
-        if (canvas.getHeight() != maze.getHeight()) {
-            canvas.setHeight(maze.getHeight());
+        if (canvas.getHeight() != canvasHeight) {
+            canvas.setHeight(canvasHeight);
         }
-        
-        maze.forEachPoint((x, y) -> {
-            Color color = colorMap.get(maze.getCell(x, y));
-            context.setFill(color);
-            context.fillRect(x, y, 1, 1);
+        maze.forEach(cell -> {
+            context.setFill(colorMap.get(cell));
+            double x = cell.getX() * cellScale;
+            double y = (mazeHeight - cell.getY() - 1) * cellScale;
+            context.fillRect(x, y, cellScale, cellScale);
         });
     }
 
     private final ObjectProperty<Maze<?>> mazeProperty = new SimpleObjectProperty<Maze<?>>(this, "maze") {
         @Override
         protected void invalidated() {
-            displayMaze(get());
+            renderMaze();
         }
     };
-    
     @Override
     public ObjectProperty<Maze<?>> mazeProperty() {
         return mazeProperty;
-    }
-    @Override
-    public void setMaze(Maze<?> maze) {
-        mazeProperty.set(maze);
-    }
-    @Override
-    public Maze<?> getMaze() {
-        return mazeProperty.get();
     }
     
 }

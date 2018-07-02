@@ -10,8 +10,12 @@ public interface MazeView {
     
     ObjectProperty<Maze<?>> mazeProperty();
     
-    void setMaze(Maze<?> maze);
+    default void setMaze(Maze<?> maze) {
+        mazeProperty().set(maze);
+    }
     
-    Maze<?> getMaze();
+    default Maze<?> getMaze() {
+        return mazeProperty().get();
+    }
     
 }

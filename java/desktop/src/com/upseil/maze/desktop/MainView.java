@@ -17,10 +17,6 @@ public class MainView extends BorderPane {
     
     @FXML
     private void initialize() {
-//        Region center = (Region) getCenter();
-//        mazeView.fitWidthProperty().bind(Bindings.min(center.widthProperty(), center.heightProperty()));
-//        mazeView.fitHeightProperty().bind(Bindings.min(center.widthProperty(), center.heightProperty()));
-        
         addEventHandler(MazeGeneratedEvent.MazeGenerated, e -> mazeView.setMaze(e.getMaze()));
     }
     
