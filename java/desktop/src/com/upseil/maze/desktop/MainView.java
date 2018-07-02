@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 
 public class MainView extends BorderPane {
     
-    @FXML private Menu menu;
     @FXML private MazeView mazeView;
     
     public MainView() {

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
-<?import com.upseil.maze.desktop.Menu?>
 <?import com.upseil.maze.desktop.definition.GeneratorDefinitionView?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
 <?import com.upseil.maze.desktop.display.GridPaneMazeView?>
 <?import com.upseil.maze.desktop.display.ImageMazeView?>
 <?import com.upseil.maze.desktop.display.CanvasMazeView?>
