@@ -4,6 +4,7 @@ public class CellType {
     
     public static final CellType Floor = new CellType("Floor");
     public static final CellType  Wall = new CellType("Wall");
+    public static final CellType Start = new CellType("Start");
     
     private final String name;
 

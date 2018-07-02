@@ -32,65 +32,63 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         M maze = getMazeFactory().create(width, height);
         
         List<Visit> visits = new ArrayList<>((int) (width * height * 0.25));
-        visits.add(new Visit(randomInt(width), randomInt(height)));
+        Point start = randomPoint(width, height, p -> p.getX() % 2 == 1 && p.getY() % 2 == 1);
+        Visit startVisit = new Visit(start);
+        startVisit.setVisited(true);
+        setCell(maze, start, CellType.Start);
+        visits.add(startVisit);
         
         while (!visits.isEmpty()) {
             Visit visit = visits.get(visits.size() - 1);
             visitCell(maze, visit);
             if (visit.hasNextDirection()) {
                 Direction direction = visit.nextDirection();
+                Point step = visit.getPoint().translate(direction);
+                Point next = step.translate(direction);
                 
-                int stepX = visit.getX() + direction.getDeltaX();
-                int stepY = visit.getY() + direction.getDeltaY();
-                
-                int nextX = stepX + direction.getDeltaX();
-                int nextY = stepY + direction.getDeltaY();
-                
-                if (maze.isInBounds(nextX, nextY) && maze.getCell(nextX, nextY) == null) {
-                    setToFloor(maze, stepX, stepY);
-                    visits.add(new Visit(nextX, nextY));
+                if (maze.isInBounds(next.getX(), next.getY()) &&
+                    maze.getCell(next.getX(), next.getY()) == null) {
+                    setCell(maze, step, CellType.Floor);
+                    visits.add(new Visit(next));
                 }
             } else {
                 visits.remove(visits.size() - 1);
             }
         }
-        
+             
         return mazeFiller.modify(maze);
     }
 
     private void visitCell(M maze, Visit visit) {
-        int x = visit.getX();
-        int y = visit.getY();
-        if (maze.getCell(x, y) == null) {
-            setToFloor(maze, x, y);
+        if (!visit.isVisited()) {
+            setCell(maze, visit.getPoint(), CellType.Floor);
+            visit.setVisited(true);
         }
     }
 
-    private void setToFloor(M maze, int x, int y) {
-        maze.setCell(x, y, getCellFactory().create(x, y, CellType.Floor));
+    private void setCell(M maze, Point point, CellType type) {
+        int x = point.getX();
+        int y = point.getY();
+        maze.setCell(x, y, getCellFactory().create(x, y, type));
     }
     
     private class Visit {
         
-        private final int x;
-        private final int y;
+        private final Point point;
         private final Iterator<Direction> directionsIterator;
+        private boolean visited;
         
-        public Visit(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public Visit(Point point) {
+            this.point = point;
+            visited = false;
             
             List<Direction> directions = new ArrayList<>(BacktrackingLabyrinthGenerator.this.directions);
             Collections.shuffle(directions, getRandom());
             directionsIterator = directions.iterator();
         }
         
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
+        public Point getPoint() {
+            return point;
         }
 
         public boolean hasNextDirection() {
@@ -99,6 +97,21 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         
         public Direction nextDirection() {
             return directionsIterator.next();
+        }
+
+        public boolean isVisited() {
+            return visited;
+        }
+
+        public void setVisited(boolean visited) {
+            this.visited = visited;
+        }
+        
+        // TODO Add toString
+        @Override
+        public String toString() {
+            // TODO Auto-generated method stub
+            return super.toString();
         }
         
     }
