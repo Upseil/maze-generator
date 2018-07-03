@@ -1,7 +1,15 @@
 package com.upseil.maze.desktop.definition;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.reflections.Reflections;
 
 import com.upseil.maze.desktop.Launcher;
 import com.upseil.maze.desktop.controls.IntegerField;
@@ -9,10 +17,10 @@ import com.upseil.maze.desktop.controls.LongField;
 import com.upseil.maze.desktop.event.MazeGeneratedEvent;
 import com.upseil.maze.desktop.util.GenericStringFormatter;
 import com.upseil.maze.desktop.util.Validatable;
+import com.upseil.maze.domain.Cell;
 import com.upseil.maze.domain.Maze;
 import com.upseil.maze.domain.factory.CellFactory;
 import com.upseil.maze.domain.factory.MazeFactory;
-import com.upseil.maze.generator.BacktrackingLabyrinthGenerator;
 import com.upseil.maze.generator.MazeGenerator;
 
 import javafx.beans.property.BooleanProperty;
@@ -25,11 +33,11 @@ import javafx.scene.layout.VBox;
 
 public class GeneratorDefinitionView extends VBox implements Validatable {
     
-    private enum GeneratorType { LabyrinthBacktracking }
+    private static final Logger logger = Logger.getLogger(GeneratorDefinitionView.class.getSimpleName());
     
     @FXML private ResourceBundle resources;
     
-    @FXML private ComboBox<GeneratorType> generatorSelector;
+    @FXML private ComboBox<GeneratorDefinition> generatorSelector;
     @FXML private LongField seedField;
     @FXML private IntegerField widthField;
     @FXML private IntegerField heightField;
@@ -42,8 +50,13 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     
     @FXML
     private void initialize() {
-        generatorSelector.setConverter(new GenericStringFormatter<>(t -> resources.getString(t.name())));
-        generatorSelector.getItems().addAll(GeneratorType.values());
+        Reflections reflections = new Reflections("com.upseil.maze");
+        for (@SuppressWarnings("rawtypes") Class<? extends MazeGenerator> type : reflections.getSubTypesOf(MazeGenerator.class)) {
+            if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
+                GeneratorDefinition.createFor(type).ifPresent(d -> generatorSelector.getItems().add(d));
+            }
+        }
+        generatorSelector.setConverter(new GenericStringFormatter<>(t -> resources.getString(t.getName())));
         generatorSelector.setValue(generatorSelector.getItems().get(0));
         
         seedField.setOnMouseClicked(e -> seedField.selectAll());
@@ -76,11 +89,8 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
             seedField.setPromptText(Long.toString(seed));
         }
         
-        switch (generatorSelector.getValue()) {
-        case LabyrinthBacktracking:
-            return new BacktrackingLabyrinthGenerator<>(random, MazeFactory.Default, CellFactory.Default);
-        }
-        throw new IllegalStateException("Can't create generator for " + generatorSelector.getValue());
+        GeneratorDefinition definition = generatorSelector.getValue();
+        return definition.create(random, MazeFactory.Default, CellFactory.Default);
     }
     
     @FXML
@@ -92,6 +102,45 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     @Override
     public ReadOnlyBooleanProperty validProperty() {
         return validProperty;
+    }
+    
+    @FunctionalInterface
+    private interface GeneratorFactory {
+        <M extends Maze<C>, C extends Cell> MazeGenerator<M, C> create(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static class GeneratorDefinition implements GeneratorFactory {
+        
+        public static Optional<GeneratorDefinition> createFor(Class<? extends MazeGenerator> type) {
+            try {
+                Constructor<MazeGenerator> constructor = (Constructor<MazeGenerator>) type.getConstructor(Random.class, MazeFactory.class, CellFactory.class);
+                return Optional.of(new GeneratorDefinition(constructor));
+            } catch (NoSuchMethodException | SecurityException e) {
+                return Optional.empty();
+            }
+        }
+        
+        private final Constructor<MazeGenerator> constructor;
+
+        public GeneratorDefinition(Constructor<MazeGenerator> constructor) {
+            this.constructor = constructor;
+        }
+        
+        public String getName() {
+            return constructor.getDeclaringClass().getSimpleName();
+        }
+
+        @Override
+        public <M extends Maze<C>, C extends Cell> MazeGenerator<M, C>  create(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
+            try {
+                return constructor.newInstance(random, mazeFactory, cellFactory);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                logger.log(Level.SEVERE, "Error invoking generator constructor", e);
+                return null;
+            }
+        }
+        
     }
     
 }

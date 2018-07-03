@@ -8,8 +8,14 @@ buildscript {
 
 apply plugin: 'javafx-gradle-plugin'
 
+ext {
+    reflectionsTarget = '0.9.11'
+}
+
+
 dependencies {
 	compile project(":core")
+	compile "org.reflections:reflections:$reflectionsTarget"
 
     testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
     
