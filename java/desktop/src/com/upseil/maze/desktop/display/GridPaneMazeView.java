@@ -1,8 +1,8 @@
 package com.upseil.maze.desktop.display;
 
+import com.upseil.maze.core.domain.Cell;
+import com.upseil.maze.core.domain.Maze;
 import com.upseil.maze.desktop.ResourceLoader;
-import com.upseil.maze.domain.Cell;
-import com.upseil.maze.domain.Maze;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;

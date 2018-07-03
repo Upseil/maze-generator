@@ -11,17 +11,17 @@ import java.util.logging.Logger;
 
 import org.reflections.Reflections;
 
+import com.upseil.maze.core.domain.Cell;
+import com.upseil.maze.core.domain.Maze;
+import com.upseil.maze.core.domain.factory.CellFactory;
+import com.upseil.maze.core.domain.factory.MazeFactory;
+import com.upseil.maze.core.generator.MazeGenerator;
 import com.upseil.maze.desktop.Launcher;
 import com.upseil.maze.desktop.controls.IntegerField;
 import com.upseil.maze.desktop.controls.LongField;
 import com.upseil.maze.desktop.event.MazeGeneratedEvent;
 import com.upseil.maze.desktop.util.GenericStringFormatter;
 import com.upseil.maze.desktop.util.Validatable;
-import com.upseil.maze.domain.Cell;
-import com.upseil.maze.domain.Maze;
-import com.upseil.maze.domain.factory.CellFactory;
-import com.upseil.maze.domain.factory.MazeFactory;
-import com.upseil.maze.generator.MazeGenerator;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;

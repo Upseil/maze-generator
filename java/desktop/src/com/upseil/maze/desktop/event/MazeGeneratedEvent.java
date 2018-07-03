@@ -1,6 +1,6 @@
 package com.upseil.maze.desktop.event;
 
-import com.upseil.maze.domain.Maze;
+import com.upseil.maze.core.domain.Maze;
 
 import javafx.event.Event;
 import javafx.event.EventType;

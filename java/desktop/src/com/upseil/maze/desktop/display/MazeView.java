@@ -1,6 +1,6 @@
 package com.upseil.maze.desktop.display;
 
-import com.upseil.maze.domain.Maze;
+import com.upseil.maze.core.domain.Maze;
 
 import javafx.beans.property.ObjectProperty;
 

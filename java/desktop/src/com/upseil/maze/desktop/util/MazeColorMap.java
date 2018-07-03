@@ -3,7 +3,7 @@ package com.upseil.maze.desktop.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.upseil.maze.domain.Cell;
+import com.upseil.maze.core.domain.Cell;
 
 import javafx.scene.paint.Color;
 
