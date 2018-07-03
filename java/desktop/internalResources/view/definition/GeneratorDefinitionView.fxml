@@ -10,12 +10,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import com.upseil.maze.desktop.controls.LongField?>
+<?import com.upseil.maze.desktop.definition.ConfigurationView?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="VBox" spacing="10">
-  <padding>
-    <Insets top="5" left="5" bottom="5" right="5" />
-  </padding>
-
   <TitledPane text="%generator" collapsible="false">
     <GridPane hgap="5" vgap="5">
       <ComboBox fx:id="generatorSelector" editable="false" GridPane.hgrow="ALWAYS" maxWidth="Infinity"
@@ -32,6 +29,11 @@
       <Label text="x" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <IntegerField fx:id="heightField" lowerBound="5" promptText="%height" onAction="#generateMaze"
                     GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" />
+                    
+      <TitledPane fx:id="mazeConfigurationContainer" text="%configuration" managed="false" visible="false"
+                  GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="3">
+        <ConfigurationView fx:id="mazeConfigurationView" hgap="5" vgap="5" styleClass="padded-view" />
+      </TitledPane>
     </GridPane>
   </TitledPane>
   

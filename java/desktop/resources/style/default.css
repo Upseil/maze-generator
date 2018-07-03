@@ -3,3 +3,11 @@
 .maze-view {
     -fx-background-color: #222;
 }
+
+.padded-view {
+    -fx-padding: 5;
+}
+
+.severe-label {
+    -fx-text-fill: darkred;
+}

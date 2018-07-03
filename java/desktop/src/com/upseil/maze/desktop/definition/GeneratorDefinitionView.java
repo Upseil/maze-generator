@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.reflections.Reflections;
 
+import com.upseil.maze.core.configuration.Configurable;
 import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.Maze;
 import com.upseil.maze.core.domain.factory.CellFactory;
@@ -29,11 +30,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 
 public class GeneratorDefinitionView extends VBox implements Validatable {
     
-    private static final Logger logger = Logger.getLogger(GeneratorDefinitionView.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(GeneratorDefinitionView.class.getName());
     
     @FXML private ResourceBundle resources;
     
@@ -41,6 +43,8 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     @FXML private LongField seedField;
     @FXML private IntegerField widthField;
     @FXML private IntegerField heightField;
+    @FXML private TitledPane mazeConfigurationContainer;
+    @FXML private ConfigurationView mazeConfigurationView;
     
     @FXML private Button generateButton;
     
@@ -50,6 +54,18 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     
     @FXML
     private void initialize() {
+        generatorSelector.valueProperty().addListener((o, oV, nV) -> {
+            Class<?> configurationType = nV.getConfigurationType();
+            boolean configurable = configurationType != null;
+            
+            mazeConfigurationContainer.setVisible(configurable);
+            mazeConfigurationContainer.setManaged(configurable);
+            mazeConfigurationContainer.setExpanded(true);
+            if (configurable) {
+                mazeConfigurationView.setType(configurationType);
+            }
+        });
+        
         Reflections reflections = new Reflections("com.upseil.maze");
         for (@SuppressWarnings("rawtypes") Class<? extends MazeGenerator> type : reflections.getSubTypesOf(MazeGenerator.class)) {
             if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
@@ -90,7 +106,7 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         }
         
         GeneratorDefinition definition = generatorSelector.getValue();
-        return definition.create(random, MazeFactory.Default, CellFactory.Default);
+        return definition.create(random, MazeFactory.Default, CellFactory.Default, mazeConfigurationView.createConfiguration());
     }
     
     @FXML
@@ -106,7 +122,8 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     
     @FunctionalInterface
     private interface GeneratorFactory {
-        <M extends Maze<C>, C extends Cell> MazeGenerator<M, C> create(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory);
+        <M extends Maze<C>, C extends Cell> MazeGenerator<M, C> create(Random random, MazeFactory<M, C> mazeFactory,
+                                                                       CellFactory<C> cellFactory, Object configuration);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -115,30 +132,54 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         public static Optional<GeneratorDefinition> createFor(Class<? extends MazeGenerator> type) {
             try {
                 Constructor<MazeGenerator> constructor = (Constructor<MazeGenerator>) type.getConstructor(Random.class, MazeFactory.class, CellFactory.class);
-                return Optional.of(new GeneratorDefinition(constructor));
+                Class configurationType = null;
+                if (Configurable.class.isAssignableFrom(type)) {
+                    configurationType = type.getMethod("getConfiguration").getReturnType();
+                }
+                return Optional.of(new GeneratorDefinition(type, constructor, configurationType));
             } catch (NoSuchMethodException | SecurityException e) {
+                logger.log(Level.SEVERE, "Error creating the generator definition", e);
                 return Optional.empty();
             }
         }
         
+        private final Class<? extends MazeGenerator> type;
         private final Constructor<MazeGenerator> constructor;
+        private final Class configurationType;
 
-        public GeneratorDefinition(Constructor<MazeGenerator> constructor) {
+        public GeneratorDefinition(Class<? extends MazeGenerator> type, Constructor<MazeGenerator> constructor, Class configurationType) {
+            this.type = type;
             this.constructor = constructor;
+            this.configurationType = configurationType;
         }
         
         public String getName() {
-            return constructor.getDeclaringClass().getSimpleName();
+            return type.getSimpleName();
+        }
+        
+        public Class<?> getConfigurationType() {
+            return configurationType;
         }
 
         @Override
-        public <M extends Maze<C>, C extends Cell> MazeGenerator<M, C>  create(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
+        public <M extends Maze<C>, C extends Cell> MazeGenerator<M, C> create(Random random, MazeFactory<M, C> mazeFactory,
+                                                                              CellFactory<C> cellFactory, Object configuration) {
+            MazeGenerator generator = null;
             try {
-                return constructor.newInstance(random, mazeFactory, cellFactory);
+                generator = constructor.newInstance(random, mazeFactory, cellFactory);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 logger.log(Level.SEVERE, "Error invoking generator constructor", e);
-                return null;
             }
+            
+            if (generator != null && configuration != null && generator instanceof Configurable) {
+                if (configurationType.isAssignableFrom(configuration.getClass())) {
+                    ((Configurable) generator).setConfiguration(configuration);
+                } else {
+                    logger.log(Level.SEVERE, "The given configuration of type " + configuration.getClass().getName() +
+                                             " doesn't match the expected type " + configurationType.getName());
+                }
+            }
+            return generator;
         }
         
     }
