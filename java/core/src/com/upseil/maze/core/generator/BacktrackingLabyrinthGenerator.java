@@ -7,7 +7,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.upseil.maze.core.configuration.LabyrinthConfiguration;
+import com.upseil.maze.core.configuration.LabyrinthConfiguration.Border;
 import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.CellType;
 import com.upseil.maze.core.domain.Direction;
@@ -17,6 +21,8 @@ import com.upseil.maze.core.domain.factory.MazeFactory;
 import com.upseil.maze.core.modifier.MazeFiller;
 
 public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> extends AbstractLabyrinthGenerator<M, C> {
+    
+    private static final Logger logger = Logger.getLogger(BacktrackingLabyrinthGenerator.class.getName());
     
     private final MazeFiller<M, C> mazeFiller;
     private final Collection<Direction> directions;
@@ -32,10 +38,9 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         M maze = getMazeFactory().create(width, height);
         
         List<Visit> visits = new ArrayList<>((int) (width * height * 0.25));
-        Point start = randomPoint(width, height, p -> p.getX() % 2 == 1 && p.getY() % 2 == 1);
-        Visit startVisit = new Visit(start);
+        Visit startVisit = new Visit(getStart(width, height));
         startVisit.setVisited(true);
-        setCell(maze, start, CellType.Start);
+        setCell(maze, startVisit.getPoint(), CellType.Start);
         visits.add(startVisit);
         
         while (!visits.isEmpty()) {
@@ -57,6 +62,24 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         }
              
         return mazeFiller.modify(maze);
+    }
+    
+    private Point getStart(int width, int height) {
+        LabyrinthConfiguration configuration = getConfiguration();
+        if (configuration == null || configuration.getBorder() == Border.Indifferent) {
+            return randomPoint(width, height);
+        }
+
+        Border border = configuration.getBorder();
+        final int modCheck = border == Border.None ? 0 : border == Border.Solid ? 1 : -1;
+        if (modCheck == -1) {
+            logger.log(Level.SEVERE, "Unknown border configuration '" + border + "'");
+            return randomPoint(width, height);
+        }
+        if (width % 2 != 1 || height % 2 != 1) {
+            logger.log(Level.WARNING, "Border " + border + " only works with odd bounds");
+        }
+        return randomPoint(width, height, p -> p.getX() % 2 == modCheck && p.getY() % 2 == modCheck);
     }
 
     private void visitCell(M maze, Visit visit) {
