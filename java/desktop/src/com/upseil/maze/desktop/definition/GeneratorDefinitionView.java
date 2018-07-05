@@ -90,7 +90,10 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         if (!isValid()) return;
         
         MazeGenerator<?, ?> generator = getGenerator();
+        long start = System.currentTimeMillis();
         Maze<?> maze = generator.generate(widthField.getValue(), heightField.getValue());
+        long duration = System.currentTimeMillis() - start;
+        logger.log(Level.FINE, "Generated maze in " + duration + "ms");
         this.fireEvent(new MazeGeneratedEvent(maze));
     }
     

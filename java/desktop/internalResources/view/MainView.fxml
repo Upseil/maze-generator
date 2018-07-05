@@ -5,6 +5,7 @@
 <?import com.upseil.maze.desktop.display.GridPaneMazeView?>
 <?import com.upseil.maze.desktop.display.ImageMazeView?>
 <?import com.upseil.maze.desktop.display.CanvasMazeView?>
+<?import com.upseil.maze.desktop.LogView?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="BorderPane">
   <left>
@@ -16,5 +17,8 @@
     <CanvasMazeView fx:id="mazeView" styleClass="maze-view" />
 <!--     <ImageMazeView fx:id="mazeView" styleClass="maze-view" /> -->
   </center>
+  
+  <bottom>
+    <LogView fx:id="logView" prefHeight="200" minHeight="150" styleClass="border-top" />
+  </bottom>
 </fx:root>
-

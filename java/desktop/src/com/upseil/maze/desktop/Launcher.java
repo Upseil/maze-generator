@@ -10,13 +10,14 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class Launcher extends Application {
     
-    private static final Level LogLevel = Level.INFO;
+    private static final Level FileLogLevel = Level.INFO;
     private static final String LogFile = "maze-generator.log";
     private static final String StylesheetFile = "style/default.css";
 
@@ -25,12 +26,12 @@ public class Launcher extends Application {
     
     public static void main(String[] args) throws IOException {
         Logger globalLogger = LogManager.getLogManager().getLogger("");
-        globalLogger.setLevel(LogLevel);
-        FileHandler fileLogger;
+        Logger.getLogger("com.upseil").setLevel(Level.ALL);
         try {
-            fileLogger = new FileHandler(LogFile);
+            FileHandler fileLogger = new FileHandler(LogFile);
             fileLogger.setFormatter(new SimpleFormatter());
             fileLogger.setEncoding("UTF-8");
+            fileLogger.setLevel(FileLogLevel);
             globalLogger.addHandler(fileLogger);
         } catch (SecurityException | IOException e) {
             globalLogger.log(Level.SEVERE, "Unable to setup FileHandler for logging", e);
@@ -52,11 +53,12 @@ public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new MainView();
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(root, 1200, 1000);
         scene.getStylesheets().add(ResourceLoader.getResource(StylesheetFile).toExternalForm());
 
         primaryStage.setTitle(resourceLoader.getResourceBundle().getString("title"));
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStage.show();
         
     }

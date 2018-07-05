@@ -1,13 +1,39 @@
 /* Default Style */
+.root {
+    -mg-background: #222;
+}
 
 .maze-view {
-    -fx-background-color: #222;
+    -fx-background-color: -mg-background;
+}
+
+.border-top {
+    -fx-border-color: -mg-background;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-style: solid;
 }
 
 .padded-view {
     -fx-padding: 5;
 }
 
+.hpadded-view {
+    -fx-padding: 0 5 0 5;
+}
+
+.vpadded-view {
+    -fx-padding: 5 0 5 0;
+}
+
 .severe-label {
     -fx-text-fill: darkred;
+}
+
+.console {
+    -fx-padding: 5 5 0 5;
+}
+
+.console-text {
+    -fx-font-family: Consolas;
+    -fx-font-size: 10pt;
 }

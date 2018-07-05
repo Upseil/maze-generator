@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -98,16 +97,17 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
     private class Visit {
         
         private final Point point;
-        private final Iterator<Direction> directionsIterator;
         private boolean visited;
+        
+        private final List<Direction> directions;
+        private int directionsIndex;
         
         public Visit(Point point) {
             this.point = point;
             visited = false;
             
-            List<Direction> directions = new ArrayList<>(BacktrackingLabyrinthGenerator.this.directions);
+            directions = new ArrayList<>(BacktrackingLabyrinthGenerator.this.directions);
             Collections.shuffle(directions, getRandom());
-            directionsIterator = directions.iterator();
         }
         
         public Point getPoint() {
@@ -115,11 +115,13 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         }
 
         public boolean hasNextDirection() {
-            return directionsIterator.hasNext();
+            return directionsIndex < directions.size();
         }
         
         public Direction nextDirection() {
-            return directionsIterator.next();
+            Direction direction = directions.get(directionsIndex);
+            directionsIndex++;
+            return direction;
         }
 
         public boolean isVisited() {
@@ -130,11 +132,23 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
             this.visited = visited;
         }
         
-        // TODO Add toString
         @Override
         public String toString() {
-            // TODO Auto-generated method stub
-            return super.toString();
+            StringBuilder builder = new StringBuilder();
+            builder.append("V[")
+                   .append(visited ? "visited " : "not visited ")
+                   .append(point).append(", [");
+            for (int i = 0; i < directions.size(); i++) {
+                Direction direction = directions.get(i);
+                if (i != 0) builder.append(", ");
+                if (i == directionsIndex) {
+                    builder.append("_").append(direction).append("_");
+                } else {
+                    builder.append(direction);
+                }
+            }
+            builder.append("]]");
+            return builder.toString();
         }
         
     }
