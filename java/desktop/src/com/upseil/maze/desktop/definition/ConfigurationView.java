@@ -15,29 +15,35 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.upseil.maze.desktop.Launcher;
-import com.upseil.maze.desktop.util.GenericStringFormatter;
+import com.upseil.maze.desktop.util.Validatable;
 
-import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public class ConfigurationView extends GridPane {
+public class ConfigurationView extends GridPane implements Validatable {
     
     private static final Logger logger = Logger.getLogger(ConfigurationView.class.getName());
     
     private final ResourceBundle resources;
+    private final BooleanProperty validProperty;
     
     private Class<?> currentType;
     private final Map<String, PropertyView> properties; 
     
     public ConfigurationView() {
         resources = Launcher.getResourceLoader().getResourceBundle();
+        validProperty = new SimpleBooleanProperty(this, "valid", true);
         properties = new HashMap<>();
     }
 
     public void setType(Class<?> configurationType) {
         if (currentType != configurationType) {
+            validProperty.unbind();
             currentType = null;
             properties.clear();
             getChildren().clear();
@@ -49,6 +55,7 @@ public class ConfigurationView extends GridPane {
             currentType = configurationType;
             
             try {
+                ObservableBooleanValue valid = null;
                 BeanInfo bean = Introspector.getBeanInfo(configurationType);
                 List<PropertyDescriptor> properties = Arrays.asList(bean.getPropertyDescriptors());
                 properties.sort((p1, p2) -> p1.getName().compareTo(p2.getName()));
@@ -62,7 +69,9 @@ public class ConfigurationView extends GridPane {
                     addRow(row, label, view.getView());
 
                     this.properties.put(propertyName, view);
+                    valid = valid == null ? view.validProperty() : Bindings.and(valid, view.validProperty());
                 }
+                validProperty.bind(valid);
             } catch (IntrospectionException e) {
                 logger.log(Level.SEVERE, "Error inspecting the given configuration type", e);
             }
@@ -113,85 +122,10 @@ public class ConfigurationView extends GridPane {
         }
         return configuration;
     }
-
-    private static interface PropertyView {
-        
-        PropertyDescriptor getProperty();
-        Node getView();
-        
-        Object getValue();
-        void setValue(Object value);
-        
-    }
     
-    private static abstract class AbstractPropertyView implements PropertyView {
-        
-        private final PropertyDescriptor property;
-
-        public AbstractPropertyView(PropertyDescriptor property) {
-            this.property = property;
-        }
-
-        @Override
-        public PropertyDescriptor getProperty() {
-            return property;
-        }
-        
-    }
-    
-    private class UnknownProperty extends AbstractPropertyView {
-        
-        private final Label label;
-
-        public UnknownProperty(PropertyDescriptor property) {
-            super(property);
-            label = new Label(resources.getString("unknownProperty"));
-            label.getStyleClass().add("severe-label");
-        }
-
-        @Override
-        public Node getView() {
-            return label;
-        }
-
-        @Override
-        public Object getValue() {
-            return null;
-        }
-        @Override
-        public void setValue(Object value) { }
-        
-    }
-    
-    private class EnumPropertyView extends AbstractPropertyView {
-        
-        private final ComboBox<Enum<?>> comboBox;
-
-        public EnumPropertyView(PropertyDescriptor property) {
-            super(property);
-            comboBox = new ComboBox<>();
-            comboBox.setConverter(new GenericStringFormatter<>(t -> resources.getString(t.name())));
-            for (Object value : property.getPropertyType().getEnumConstants()) {
-                comboBox.getItems().add((Enum<?>) value);
-            }
-            comboBox.setValue(comboBox.getItems().get(0));
-        }
-
-        @Override
-        public Node getView() {
-            return comboBox;
-        }
-
-        @Override
-        public Object getValue() {
-            return comboBox.getValue();
-        }
-
-        @Override
-        public void setValue(Object value) {
-            comboBox.setValue((Enum<?>) value);
-        }
-        
+    @Override
+    public ReadOnlyBooleanProperty validProperty() {
+        return validProperty;
     }
     
 }
