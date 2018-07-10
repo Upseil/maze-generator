@@ -13,6 +13,20 @@ public enum Direction {
         return valuesIterable;
     }
     
+    public static Direction getOpposite(Direction direction) {
+        switch (direction) {
+        case North:     return South;
+        case NorthEast: return SouthWest;
+        case East:      return West;
+        case SouthEast: return NorthWest;
+        case South:     return North;
+        case SouthWest: return NorthEast;
+        case West:      return East;
+        case NorthWest: return SouthEast;
+        }
+        throw new IllegalArgumentException("No opposite available for " + direction);
+    }
+    
     private final int deltaX;
     private final int deltaY;
     
@@ -27,6 +41,10 @@ public enum Direction {
 
     public int getDeltaY() {
         return deltaY;
+    }
+    
+    public Direction getOpposite() {
+        return Direction.getOpposite(this);
     }
     
 }

@@ -1,10 +1,11 @@
 package com.upseil.maze.core.domain;
 
-public class CellType {
+public final class CellType {
     
     public static final CellType Floor = new CellType("Floor");
     public static final CellType  Wall = new CellType("Wall");
     public static final CellType Start = new CellType("Start");
+    public static final CellType  Exit = new CellType("Exit");
     
     private final String name;
 

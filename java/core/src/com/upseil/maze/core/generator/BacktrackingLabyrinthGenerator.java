@@ -15,6 +15,7 @@ import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.CellType;
 import com.upseil.maze.core.domain.Direction;
 import com.upseil.maze.core.domain.Maze;
+import com.upseil.maze.core.domain.Point;
 import com.upseil.maze.core.domain.factory.CellFactory;
 import com.upseil.maze.core.domain.factory.MazeFactory;
 import com.upseil.maze.core.modifier.MazeFiller;
@@ -30,6 +31,7 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         super(random, mazeFactory, cellFactory);
         mazeFiller = new MazeFiller<>(cellFactory, CellType.Wall);
         directions = Arrays.asList(Direction.North, Direction.East, Direction.South, Direction.West);
+        setConfiguration(new LabyrinthConfiguration());
     }
 
     @Override
@@ -39,7 +41,7 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         List<Visit> visits = new ArrayList<>((int) (width * height * 0.25));
         Visit startVisit = new Visit(getStart(width, height));
         startVisit.setVisited(true);
-        setCell(maze, startVisit.getPoint(), CellType.Start);
+        setCell(maze, startVisit.getPoint(), CellType.Floor);
         visits.add(startVisit);
         
         while (!visits.isEmpty()) {
@@ -64,12 +66,11 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
     }
     
     private Point getStart(int width, int height) {
-        LabyrinthConfiguration configuration = getConfiguration();
-        if (configuration == null || configuration.getBorder() == Border.Indifferent) {
+        Border border = getConfiguration().getBorder();
+        if (border == Border.Indifferent) {
             return randomPoint(width, height);
         }
 
-        Border border = configuration.getBorder();
         final int modCheck = border == Border.None ? 0 : border == Border.Solid ? 1 : -1;
         if (modCheck == -1) {
             logger.log(Level.SEVERE, "Unknown border configuration '" + border + "'");
@@ -91,7 +92,7 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
     private void setCell(M maze, Point point, CellType type) {
         int x = point.getX();
         int y = point.getY();
-        maze.setCell(x, y, getCellFactory().create(x, y, type));
+        maze.setCell(getCellFactory().create(x, y, type));
     }
     
     private class Visit {

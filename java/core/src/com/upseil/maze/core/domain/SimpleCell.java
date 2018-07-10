@@ -1,5 +1,7 @@
 package com.upseil.maze.core.domain;
 
+import java.util.Objects;
+
 public class SimpleCell implements Cell {
     
     private final int x;
@@ -8,6 +10,7 @@ public class SimpleCell implements Cell {
     private final CellType type;
 
     public SimpleCell(int x, int y, CellType type) {
+        Objects.requireNonNull(type, "type must not be null");
         this.x = x;
         this.y = y;
         this.type = type;
@@ -39,7 +42,7 @@ public class SimpleCell implements Cell {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + type.hashCode();
         result = prime * result + x;
         result = prime * result + y;
         return result;

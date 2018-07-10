@@ -30,7 +30,7 @@ class TestSimpleMazeFormatter {
     
     @Test
     void testFormatSimpleMaze() {
-        maze.setCell(0, 0, new SimpleCell(0, 0, CellType.Wall));
+        maze.setCell(new SimpleCell(0, 0, CellType.Wall));
         
         String expectedString = "F F\nW F";
         assertThat(formatter.convert(maze), is(expectedString));
@@ -38,24 +38,24 @@ class TestSimpleMazeFormatter {
     
     @Test
     void testFormatMazeWithCustomCellType() {
-        maze.setCell(0, 0, new SimpleCell(0, 0, new CellType("Floor2")));
+        maze.setCell(new SimpleCell(0, 0, new CellType("Floor2")));
         
         String expectedString = "F F\nF F";
         assertThat(formatter.convert(maze), is(expectedString));
         
-        maze.setCell(0, 0, new SimpleCell(0, 0, new CellType("Test")));
+        maze.setCell(new SimpleCell(0, 0, new CellType("Test")));
         expectedString = "F F\nT F";
         assertThat(formatter.convert(maze), is(expectedString));
     }
     
     @Test
     void testFormatMazeWithNullCell() {
-        maze.setCell(0, 0, null);
+        maze.removeCell(0, 0);
         
         String expectedString = "F F\n  F";
         assertThat(formatter.convert(maze), is(expectedString));
         
-        maze.setCell(0, 0, new SimpleCell(0, 0, new CellType("Test")));
+        maze.setCell(new SimpleCell(0, 0, new CellType("Test")));
         expectedString = "F F\nT F";
         assertThat(formatter.convert(maze), is(expectedString));
     }

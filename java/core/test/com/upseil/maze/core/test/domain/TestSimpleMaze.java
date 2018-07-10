@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.upseil.maze.core.domain.CellType;
+import com.upseil.maze.core.domain.Cells;
 import com.upseil.maze.core.domain.Direction;
 import com.upseil.maze.core.domain.SimpleCell;
 import com.upseil.maze.core.domain.SimpleMaze;
@@ -33,7 +34,7 @@ class TestSimpleMaze {
     @BeforeEach
     void initializeMaze() {
         maze = Filler.modify(new SimpleMaze(2, 2));
-        maze.setCell(0, 0, new SimpleCell(0, 0, CellType.Wall));
+        maze.setCell(new SimpleCell(0, 0, CellType.Wall));
     }
     
     @Test
@@ -87,7 +88,7 @@ class TestSimpleMaze {
         expectedNeighbours.clear();
         expectedNeighbours.put(Direction.SouthEast, new SimpleCell(1, 0, CellType.Floor));
         expectedNeighbours.put(Direction.East,      new SimpleCell(1, 1, CellType.Floor));
-        assertThat(maze.getNeighbours(0, 1, c -> c.getType() == CellType.Floor), is(expectedNeighbours));
+        assertThat(maze.getNeighbours(0, 1, Cells.ofType(CellType.Floor)), is(expectedNeighbours));
         assertThat(maze.getNeighbours(0, 1, Arrays.asList(Direction.East, Direction.SouthEast)), is(expectedNeighbours));
 
         assertThrows(IndexOutOfBoundsException.class, () -> maze.getNeighbours(-1, 0));
@@ -95,7 +96,7 @@ class TestSimpleMaze {
     
     @Test
     void testIterator() {
-        maze.setCell(0, 0, null);
+        maze.removeCell(0, 0);
         
         Set<SimpleCell> expectedCells = new HashSet<>();
         for (int x = 0; x < maze.getWidth(); x++) {

@@ -4,8 +4,8 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 import com.upseil.maze.core.domain.Cell;
-import com.upseil.maze.core.domain.Direction;
 import com.upseil.maze.core.domain.Maze;
+import com.upseil.maze.core.domain.Point;
 import com.upseil.maze.core.domain.factory.CellFactory;
 import com.upseil.maze.core.domain.factory.MazeFactory;
 
@@ -47,51 +47,6 @@ public abstract class AbstractMazeGenerator<M extends Maze<C>, C extends Cell> i
             point = randomPoint(xBound, yBound);
         } while (!predicate.test(point));
         return point;
-    }
-    
-    protected static class Point {
-        
-        private final int x;
-        private final int y;
-        
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-        
-        public Point translateX(int x) {
-            return translate(x, 0);
-        }
-        
-        public Point translateY(int y) {
-            return translate(0, y);
-        }
-        
-        public Point translate(Direction direction) {
-            return translate(direction, 1);
-        }
-        
-        public Point translate(Direction direction, int amount) {
-            return translate(direction.getDeltaX() * amount, direction.getDeltaY() * amount);
-        }
-        
-        public Point translate(int x, int y) {
-            return new Point(this.x + x, this.y + y);
-        }
-        
-        @Override
-        public String toString() {
-            return "(" + x + ", " + y + ")";
-        }
-        
     }
     
 }

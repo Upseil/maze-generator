@@ -64,6 +64,11 @@ public class GenericMaze<C extends Cell> implements Maze<C> {
     }
     
     @Override
+    public Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super C> predicate) {
+        return getNeighbours(x, y, directions, predicate, mapFactory.get());
+    }
+    
+    @Override
     public Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate, Map<Direction, C> result) {
         return getNeighbours(x, y, Direction.iterable(), predicate, result);
     }
@@ -86,9 +91,17 @@ public class GenericMaze<C extends Cell> implements Maze<C> {
     }
 
     @Override
-    public void setCell(int x, int y, C cell) {
+    public void setCell(C cell) {
+        int x = cell.getX();
+        int y = cell.getY();
         validateCoordinates(x, y);
         unsafeSet(x, y, cell);
+    }
+    
+    @Override
+    public void removeCell(int x, int y) {
+        validateCoordinates(x, y);
+        unsafeSet(x, y, null);
     }
     
     @Override

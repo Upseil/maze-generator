@@ -19,3 +19,7 @@
 .Start {
     -fx-background-color: #8f8;
 }
+
+.Exit {
+    -fx-background-color: #88f;
+}

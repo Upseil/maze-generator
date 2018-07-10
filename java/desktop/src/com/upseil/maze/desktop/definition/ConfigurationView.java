@@ -64,7 +64,8 @@ public class ConfigurationView extends GridPane implements Validatable {
                     String propertyName = property.getName();
                     if (property.getReadMethod() == null || property.getWriteMethod() == null) continue;
                     
-                    Label label = new Label(resources.getString(propertyName));
+                    String labelText = resources.containsKey(propertyName) ? resources.getString(propertyName) : propertyName;
+                    Label label = new Label(labelText);
                     PropertyView view = createPropertyView(property);
                     addRow(row, label, view.getView());
 
