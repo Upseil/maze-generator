@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
 
 import java.util.Random;
 
@@ -40,7 +41,7 @@ class TestDeadEndStripper {
     }
     
     @Test
-    void testNoDeadEndStripping() {
+    void testZeroDeadEndStripping() {
         DeadEndStripper<Maze<Cell>, Cell> deadEndStripper = new DeadEndStripper<>(new Random(), CellFactory.Default);
         deadEndStripper.getConfiguration().setPercentage(0);
         Maze<Cell> maze = deadEndStripper.modify(createCrossMaze(MazeSize));
@@ -93,13 +94,39 @@ class TestDeadEndStripper {
             assertThat(cell.toString(), cell.getType(), is(expectedType));
         }
     }
+    
+    @Test
+    void testDeadEndStrippingWithWeirdCellType() {
+        CellType weirdType = new CellType("Floor_Marked_ZZ");
+        DeadEndStripper<Maze<Cell>, Cell> deadEndStripper = new DeadEndStripper<>(new Random(), CellFactory.Default);
+        deadEndStripper.getConfiguration().setFillType(weirdType);
+        
+        Maze<Cell> maze = deadEndStripper.modify(createCrossMaze(MazeSize, CellType.Floor, weirdType));
+        assertThat(maze, everyItem(hasProperty("type", equalTo(weirdType))));
+    }
+    
+    @Test
+    void testCellIdentityPreservation() {
+        DeadEndStripper<Maze<Cell>, Cell> deadEndStripper = new DeadEndStripper<>(new Random(), CellFactory.Default);
+        deadEndStripper.getConfiguration().setPercentage(0);
+        
+        Maze<Cell> maze = createCrossMaze(MazeSize);
+        int center = MazeSize / 2;
+        Cell cell = maze.getCell(center, center);
+        deadEndStripper.modify(maze);
+        assertThat(maze.getCell(center, center), sameInstance(cell));
+    }
 
     private Maze<Cell> createCrossMaze(int size) {
+        return createCrossMaze(size, CellType.Floor, CellType.Wall);
+    }
+
+    private Maze<Cell> createCrossMaze(int size, CellType crossType, CellType fillType) {
         int center = size / 2;
         Maze<Cell> maze = new GenericMaze<>(size, size);
         for (int x = 0; x < maze.getWidth(); x++) {
             for (int y = 0; y < maze.getHeight(); y++) {
-                CellType type = x == center || y == center ? CellType.Floor : CellType.Wall;
+                CellType type = x == center || y == center ? crossType : fillType;
                 maze.setCell(new SimpleCell(x, y, type));
             }
         }
