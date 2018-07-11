@@ -16,14 +16,12 @@ import com.upseil.maze.core.domain.Direction;
 import com.upseil.maze.core.domain.Maze;
 import com.upseil.maze.core.domain.Point;
 
-public class DeadEndStripper<M extends Maze> extends AbstractMazeModifier<M, DeadEndStripperConfiguration> {
+public class DeadEndStripper<M extends Maze> extends AbstractRandomizedMazeModifier<M, DeadEndStripperConfiguration> {
     
     private static final String MarkerTypeSuffix = "_Marked";
     
-    private final Random random;
-    
     public DeadEndStripper(Random random) {
-        this.random = random;
+        super(random);
         setConfiguration(new DeadEndStripperConfiguration());
     }
 
@@ -91,7 +89,7 @@ public class DeadEndStripper<M extends Maze> extends AbstractMazeModifier<M, Dea
                 }
             }
         }
-        Collections.shuffle(deadEnds, random);
+        Collections.shuffle(deadEnds, getRandom());
         
         StringBuilder markerTypeName = new StringBuilder(searchType.getName());
         markerTypeName.append(MarkerTypeSuffix);

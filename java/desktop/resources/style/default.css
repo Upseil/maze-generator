@@ -37,3 +37,7 @@
     -fx-font-family: Consolas;
     -fx-font-size: 10pt;
 }
+
+.uncollapsible-titled-pane > .title:hover {
+    -fx-color: -fx-base;
+}

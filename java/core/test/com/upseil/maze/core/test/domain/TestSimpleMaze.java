@@ -34,7 +34,7 @@ class TestSimpleMaze {
     
     @BeforeEach
     void initializeMaze() {
-        maze = Filler.modify(new GridMaze(2, 2, Direction.fullValues(), Maze.DefaultMapFactory));
+        maze = Filler.modify(new GridMaze(2, 2, Direction.fullDirections()));
         maze.setCell(new Cell(0, 0, CellType.Wall));
     }
     
@@ -79,17 +79,17 @@ class TestSimpleMaze {
         expectedNeighbours.put(Direction.North,     new Cell(0, 1, CellType.Floor));
         expectedNeighbours.put(Direction.East,      new Cell(1, 0, CellType.Floor));
         expectedNeighbours.put(Direction.NorthEast, new Cell(1, 1, CellType.Floor));
-        assertThat(maze.getNeighbours(0, 0, Direction.allValues()), is(expectedNeighbours));
+        assertThat(maze.getNeighbours(0, 0, Direction.allDirections()), is(expectedNeighbours));
         
         Map<Direction, Cell> neighbours = new HashMap<>();
-        Map<Direction, Cell> returnedNeighbours = maze.getNeighbours(0, 0, Direction.allValues(), neighbours);
+        Map<Direction, Cell> returnedNeighbours = maze.getNeighbours(0, 0, Direction.allDirections(), neighbours);
         assertThat(returnedNeighbours, is(sameInstance(neighbours)));
         assertThat(neighbours, is(expectedNeighbours));
         
         expectedNeighbours.clear();
         expectedNeighbours.put(Direction.SouthEast, new Cell(1, 0, CellType.Floor));
         expectedNeighbours.put(Direction.East,      new Cell(1, 1, CellType.Floor));
-        assertThat(maze.getNeighbours(0, 1, Direction.allValues(), Cells.ofType(CellType.Floor)), is(expectedNeighbours));
+        assertThat(maze.getNeighbours(0, 1, Direction.allDirections(), Cells.ofType(CellType.Floor)), is(expectedNeighbours));
         assertThat(maze.getNeighbours(0, 1, Arrays.asList(Direction.East, Direction.SouthEast)), is(expectedNeighbours));
 
         assertThrows(IndexOutOfBoundsException.class, () -> maze.getNeighbours(-1, 0));

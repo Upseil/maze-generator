@@ -24,7 +24,7 @@ class TestSimpleMazeFormatter {
     @BeforeEach
     void initiliaze() {
         formatter = new SimpleMazeFormatter();
-        maze = Filler.modify(new GridMaze(2, 2, Direction.fullValues(), Maze.DefaultMapFactory));
+        maze = Filler.modify(new GridMaze(2, 2, Direction.fullDirections()));
     }
     
     @Test

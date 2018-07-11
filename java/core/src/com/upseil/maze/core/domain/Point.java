@@ -74,12 +74,11 @@ public class Point {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Point other = (Point) obj;
-        if (x != other.x)
-            return false;
-        if (y != other.y)
-            return false;
-        return true;
+        return equals((Point) obj);
+    }
+    
+    public boolean equals(Point point) {
+        return this.x == point.x && this.y == point.y;
     }
     
 }

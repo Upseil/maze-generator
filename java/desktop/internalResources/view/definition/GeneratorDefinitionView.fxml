@@ -13,7 +13,7 @@
 <?import com.upseil.maze.desktop.definition.ConfigurationView?>
 
 <fx:root xmlns:fx="http://javafx.com/fxml/1" type="VBox" spacing="10">
-  <TitledPane text="%generator" collapsible="false">
+  <TitledPane text="%generator" styleClass="uncollapsible-titled-pane" collapsible="false">
     <GridPane hgap="5" vgap="5">
       <ComboBox fx:id="generatorSelector" editable="false" GridPane.hgrow="ALWAYS" maxWidth="Infinity"
                 GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="3" />
@@ -39,4 +39,3 @@
   
   <Button fx:id="generateButton" text="%generate" onAction="#generateMaze" VBox.vgrow="ALWAYS" maxWidth="Infinity" />
 </fx:root>
-

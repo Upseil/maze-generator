@@ -10,11 +10,11 @@ public enum Direction {
     private static final Iterable<Direction> AllValuesIterable = Arrays.asList(North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest);
     private static final Iterable<Direction> FullValuesIterable = Arrays.asList(North, East, South, West);
     
-    public static Iterable<Direction> allValues() {
+    public static Iterable<Direction> allDirections() {
         return AllValuesIterable;
     }
     
-    public static Iterable<Direction> fullValues() {
+    public static Iterable<Direction> fullDirections() {
         return FullValuesIterable;
     }
     

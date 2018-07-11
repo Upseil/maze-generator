@@ -18,11 +18,11 @@ class TestMazeFiller {
     @Test
     void testMazeFiller() {
         MazeFiller<Maze> mazeFiller = new MazeFiller<>();
-        Maze maze = mazeFiller.modify(new GridMaze(3, 3, Direction.fullValues(), Maze.DefaultMapFactory));
+        Maze maze = mazeFiller.modify(new GridMaze(3, 3, Direction.fullDirections()));
         assertThat(maze, everyItem(hasProperty("type", equalTo(CellType.Wall))));
         
         mazeFiller.getConfiguration().setFillType(CellType.Floor);
-        maze = mazeFiller.modify(new GridMaze(3, 3, Direction.fullValues(), Maze.DefaultMapFactory));
+        maze = mazeFiller.modify(new GridMaze(3, 3, Direction.fullDirections()));
         assertThat(maze, everyItem(hasProperty("type", equalTo(CellType.Floor))));
     }
     

@@ -124,7 +124,7 @@ class TestDeadEndStripper {
 
     private Maze createCrossMaze(int size, CellType crossType, CellType fillType) {
         int center = size / 2;
-        Maze maze = new GridMaze(size, size, Direction.fullValues(), Maze.DefaultMapFactory);
+        Maze maze = new GridMaze(size, size, Direction.fullDirections());
         for (int x = 0; x < maze.getWidth(); x++) {
             for (int y = 0; y < maze.getHeight(); y++) {
                 CellType type = x == center || y == center ? crossType : fillType;

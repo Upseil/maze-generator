@@ -3,18 +3,15 @@ package com.upseil.maze.core.domain;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class GridMaze implements Maze {
     
     private final Cell[][] cells;
     private final Iterable<Direction> walkableDirections;
-    private final Supplier<Map<Direction, Cell>> mapFactory;
 
-    public GridMaze(int width, int height, Iterable<Direction> walkableDirections, Supplier<Map<Direction, Cell>> mapFactory) {
+    public GridMaze(int width, int height, Iterable<Direction> walkableDirections) {
         cells = new Cell[width][height];
         this.walkableDirections = walkableDirections;
-        this.mapFactory = mapFactory;
     }
     
     @Override
@@ -72,11 +69,6 @@ public class GridMaze implements Maze {
             }
         }
         return result;
-    }
-    
-    @Override
-    public Supplier<Map<Direction, Cell>> getMapFactory() {
-        return mapFactory;
     }
     
     @Override
