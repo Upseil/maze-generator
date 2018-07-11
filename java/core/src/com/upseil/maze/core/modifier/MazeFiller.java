@@ -4,18 +4,14 @@ import com.upseil.maze.core.configuration.MazeFillerConfiguration;
 import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.CellType;
 import com.upseil.maze.core.domain.Maze;
-import com.upseil.maze.core.domain.factory.CellFactory;
 
-public class MazeFiller<M extends Maze<C>, C extends Cell> extends AbstractMazeModifier<M, C, MazeFillerConfiguration> {
+public class MazeFiller<M extends Maze> extends AbstractMazeModifier<M, MazeFillerConfiguration> {
 
-    public MazeFiller(CellFactory<C> cellFactory) {
-        super(cellFactory);
+    public MazeFiller() {
         setConfiguration(new MazeFillerConfiguration());
     }
     
-    public MazeFiller(CellFactory<C> cellFactory, CellType fillType) {
-        super(cellFactory);
-        
+    public MazeFiller(CellType fillType) {
         MazeFillerConfiguration configuration = new MazeFillerConfiguration();
         configuration.setFillType(fillType);
         setConfiguration(configuration);
@@ -30,7 +26,7 @@ public class MazeFiller<M extends Maze<C>, C extends Cell> extends AbstractMazeM
         final CellType fillType = getConfiguration().getFillType();
         maze.forEachPoint((x, y) -> {
             if (maze.getCell(x, y) == null) {
-                maze.setCell(cellFactory.create(x, y, fillType));
+                maze.setCell(new Cell(x, y, fillType));
             }
         });
         return maze;

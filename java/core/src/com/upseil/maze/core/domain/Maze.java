@@ -1,70 +1,98 @@
 package com.upseil.maze.core.domain;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import com.upseil.maze.core.function.IntIntConsumer;
 
-public interface Maze<C extends Cell> extends Iterable<C> {
+public interface Maze extends Iterable<Cell> {
     
-    C getCell(int x, int y);
-    
-    void setCell(C cell);
-    default void setCells(Iterable<C> cells) {
-        for (C cell : cells) {
-            setCell(cell);
-        }
-    }
-    
-    void removeCell(int x, int y);
-    
-    C getNeighbour(int x, int y, Direction direction);
-    
-    Map<Direction, C> getNeighbours(int x, int y);
-    default Map<Direction, C> getNeighbours(C cell) {
-        return getNeighbours(cell.getX(), cell.getY());
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Map<Direction, C> result);
-    default Map<Direction, C> getNeighbours(C cell, Map<Direction, C> result) {
-        return getNeighbours(cell.getX(), cell.getY(), result);
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions);
-    default Map<Direction, C> getNeighbours(C cell, Iterable<Direction> directions) {
-        return getNeighbours(cell.getX(), cell.getY(), directions);
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Map<Direction, C> result);
-    default Map<Direction, C> getNeighbours(C cell, Iterable<Direction> directions, Map<Direction, C> result) {
-        return getNeighbours(cell.getX(), cell.getY(), directions, result);
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate);
-    default Map<Direction, C> getNeighbours(C cell, Predicate<? super C> predicate) {
-        return getNeighbours(cell.getX(), cell.getY(), predicate);
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super C> predicate);
-    default Map<Direction, C> getNeighbours(C cell, Iterable<Direction> directions, Predicate<? super C> predicate) {
-        return getNeighbours(cell.getX(), cell.getY(), directions, predicate);
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Predicate<? super C> predicate, Map<Direction, C> result);
-    default Map<Direction, C> getNeighbours(C cell, Predicate<? super C> predicate, Map<Direction, C> result) {
-        return getNeighbours(cell.getX(), cell.getY(), predicate, result);
-    }
-    
-    Map<Direction, C> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super C> predicate, Map<Direction, C> result);
-    default Map<Direction, C> getNeighbours(C cell, Iterable<Direction> directions, Predicate<? super C> predicate, Map<Direction, C> result) {
-        return getNeighbours(cell.getX(), cell.getY(), directions, predicate, result);
-    }
+    final Predicate<Object> DefaultPredicate = c -> true;
+    final Supplier<Map<Direction, Cell>> DefaultMapFactory = () -> new HashMap<>();
     
     int getWidth();
     int getHeight();
     boolean isInBounds(int x, int y);
+    
+    Cell getCell(int x, int y);
+    void setCell(Cell cell);
+    void removeCell(int x, int y);
+    
+    default void setCells(Iterable<Cell> cells) {
+        for (Cell cell : cells) {
+            setCell(cell);
+        }
+    }
+    
+    Iterable<Direction> getWalkableDirections();
+    Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super Cell> predicate, Map<Direction, Cell> result);
+    
+    default Supplier<Map<Direction, Cell>> getMapFactory() {
+        return DefaultMapFactory;
+    }
+    
+    default Cell getNeighbour(int x, int y, Direction direction) {
+        int neighbourX = x + direction.getDeltaX();
+        int neighbourY = y + direction.getDeltaY();
+        return isInBounds(neighbourX, neighbourY) ? getCell(neighbourX, neighbourY) : null;
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y) {
+        return getNeighbours(x, y, getWalkableDirections(), DefaultPredicate, getMapFactory().get());
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell) {
+        return getNeighbours(cell.getX(), cell.getY(), getWalkableDirections(), DefaultPredicate, getMapFactory().get());
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y, Map<Direction, Cell> result) {
+        return getNeighbours(x, y, getWalkableDirections(), DefaultPredicate, result);
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell, Map<Direction, Cell> result) {
+        return getNeighbours(cell.getX(), cell.getY(), getWalkableDirections(), DefaultPredicate, result);
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions) {
+        return getNeighbours(x, y, directions, DefaultPredicate, getMapFactory().get());
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell, Iterable<Direction> directions) {
+        return getNeighbours(cell.getX(), cell.getY(), directions, DefaultPredicate, getMapFactory().get());
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Map<Direction, Cell> result) {
+        return getNeighbours(x, y, directions, DefaultPredicate, result);
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell, Iterable<Direction> directions, Map<Direction, Cell> result) {
+        return getNeighbours(cell.getX(), cell.getY(), directions, DefaultPredicate, result);
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y, Predicate<? super Cell> predicate) {
+        return getNeighbours(x, y, getWalkableDirections(), predicate, getMapFactory().get());
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell, Predicate<? super Cell> predicate) {
+        return getNeighbours(cell.getX(), cell.getY(), getWalkableDirections(), predicate, getMapFactory().get());
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y, Iterable<Direction> directions, Predicate<? super Cell> predicate) {
+        return getNeighbours(x, y, directions, predicate, getMapFactory().get());
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell, Iterable<Direction> directions, Predicate<? super Cell> predicate) {
+        return getNeighbours(cell.getX(), cell.getY(), directions, predicate, getMapFactory().get());
+    }
+    
+    default Map<Direction, Cell> getNeighbours(int x, int y, Predicate<? super Cell> predicate, Map<Direction, Cell> result) {
+        return getNeighbours(x, y, getWalkableDirections(), predicate, result);
+    }
+    default Map<Direction, Cell> getNeighbours(Cell cell, Predicate<? super Cell> predicate, Map<Direction, Cell> result) {
+        return getNeighbours(cell.getX(), cell.getY(), getWalkableDirections(), predicate, result);
+    }
+    
+    default Map<Direction, Cell> getNeighbours(Cell cell, Iterable<Direction> directions, Predicate<? super Cell> predicate, Map<Direction, Cell> result) {
+        return getNeighbours(cell.getX(), cell.getY(), directions, predicate, result);
+    }
     
     default void forEachPoint(IntIntConsumer consumer) {
         int width = getWidth();
@@ -76,10 +104,10 @@ public interface Maze<C extends Cell> extends Iterable<C> {
         }
     }
     
-    default void forEach(Predicate<? super C> predicate, Consumer<? super C> action) {
+    default void forEach(Predicate<? super Cell> predicate, Consumer<? super Cell> action) {
         Objects.requireNonNull(action);
         Objects.requireNonNull(predicate);
-        for (C cell : this) {
+        for (Cell cell : this) {
             if (predicate.test(cell)) {
                 action.accept(cell);
             }

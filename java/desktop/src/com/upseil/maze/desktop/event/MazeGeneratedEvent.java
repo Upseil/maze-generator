@@ -10,14 +10,14 @@ public class MazeGeneratedEvent extends Event {
 
     public static final EventType<MazeGeneratedEvent> MazeGenerated = new EventType<>("MazeGenerated");
     
-    private final Maze<?> maze;
+    private final Maze maze;
 
-    public MazeGeneratedEvent(Maze<?> maze) {
+    public MazeGeneratedEvent(Maze maze) {
         super(MazeGenerated);
         this.maze = maze;
     }
     
-    public Maze<?> getMaze() {
+    public Maze getMaze() {
         return maze;
     }
     

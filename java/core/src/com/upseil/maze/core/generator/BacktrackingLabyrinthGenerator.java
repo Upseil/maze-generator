@@ -1,8 +1,6 @@
 package com.upseil.maze.core.generator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -15,22 +13,19 @@ import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.CellType;
 import com.upseil.maze.core.domain.Direction;
 import com.upseil.maze.core.domain.Maze;
+import com.upseil.maze.core.domain.MazeFactory;
 import com.upseil.maze.core.domain.Point;
-import com.upseil.maze.core.domain.factory.CellFactory;
-import com.upseil.maze.core.domain.factory.MazeFactory;
 import com.upseil.maze.core.modifier.MazeFiller;
 
-public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> extends AbstractLabyrinthGenerator<M, C> {
+public class BacktrackingLabyrinthGenerator<M extends Maze> extends AbstractLabyrinthGenerator<M> {
     
     private static final Logger logger = Logger.getLogger(BacktrackingLabyrinthGenerator.class.getName());
     
-    private final MazeFiller<M, C> mazeFiller;
-    private final Collection<Direction> directions;
+    private final MazeFiller<M> mazeFiller;
     
-    public BacktrackingLabyrinthGenerator(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
-        super(random, mazeFactory, cellFactory);
-        mazeFiller = new MazeFiller<>(cellFactory, CellType.Wall);
-        directions = Arrays.asList(Direction.North, Direction.East, Direction.South, Direction.West);
+    public BacktrackingLabyrinthGenerator(Random random, MazeFactory<M> mazeFactory) {
+        super(random, mazeFactory);
+        mazeFiller = new MazeFiller<>(CellType.Wall);
         setConfiguration(new LabyrinthConfiguration());
     }
 
@@ -39,9 +34,7 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         M maze = getMazeFactory().create(width, height);
         
         List<Visit> visits = new ArrayList<>((int) (width * height * 0.25));
-        Visit startVisit = new Visit(getStart(width, height));
-        startVisit.setVisited(true);
-        setCell(maze, startVisit.getPoint(), CellType.Floor);
+        Visit startVisit = new Visit(getStart(width, height), maze.getWalkableDirections(), getRandom());
         visits.add(startVisit);
         
         while (!visits.isEmpty()) {
@@ -54,8 +47,8 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
                 
                 if (maze.isInBounds(next.getX(), next.getY()) &&
                     maze.getCell(next.getX(), next.getY()) == null) {
-                    setCell(maze, step, CellType.Floor);
-                    visits.add(new Visit(next));
+                    maze.setCell(new Cell(step.getX(), step.getY(), CellType.Floor));
+                    visits.add(new Visit(next, maze.getWalkableDirections(), getRandom()));
                 }
             } else {
                 visits.remove(visits.size() - 1);
@@ -84,18 +77,13 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
 
     private void visitCell(M maze, Visit visit) {
         if (!visit.isVisited()) {
-            setCell(maze, visit.getPoint(), CellType.Floor);
+            Point point = visit.getPoint();
+            maze.setCell(new Cell(point.getX(), point.getY(), CellType.Floor));
             visit.setVisited(true);
         }
     }
 
-    private void setCell(M maze, Point point, CellType type) {
-        int x = point.getX();
-        int y = point.getY();
-        maze.setCell(getCellFactory().create(x, y, type));
-    }
-    
-    private class Visit {
+    private static class Visit {
         
         private final Point point;
         private boolean visited;
@@ -103,12 +91,15 @@ public class BacktrackingLabyrinthGenerator<M extends Maze<C>, C extends Cell> e
         private final List<Direction> directions;
         private int directionsIndex;
         
-        public Visit(Point point) {
+        public Visit(Point point, Iterable<Direction> directions, Random random) {
             this.point = point;
             visited = false;
             
-            directions = new ArrayList<>(BacktrackingLabyrinthGenerator.this.directions);
-            Collections.shuffle(directions, getRandom());
+            this.directions = new ArrayList<>();
+            for (Direction direction : directions) {
+                this.directions.add(direction);
+            }
+            Collections.shuffle(this.directions, random);
         }
         
         public Point getPoint() {

@@ -29,7 +29,7 @@ public class ImageMazeView extends StackPane implements MazeView {
         getChildren().add(imageView);
     }
 
-    private void displayMaze(Maze<?> maze) {
+    private void displayMaze(Maze maze) {
         if (image == null || image.widthProperty().intValue() != maze.getWidth() ||
             image.heightProperty().intValue() != maze.getHeight()) {
             image = new WritableImage(maze.getWidth(), maze.getHeight());
@@ -41,14 +41,14 @@ public class ImageMazeView extends StackPane implements MazeView {
         imageView.setImage(image);
     }
 
-    private final ObjectProperty<Maze<?>> mazeProperty = new SimpleObjectProperty<Maze<?>>(this, "maze") {
+    private final ObjectProperty<Maze> mazeProperty = new SimpleObjectProperty<Maze>(this, "maze") {
         @Override
         protected void invalidated() {
             displayMaze(get());
         }
     };
     @Override
-    public ObjectProperty<Maze<?>> mazeProperty() {
+    public ObjectProperty<Maze> mazeProperty() {
         return mazeProperty;
     }
     

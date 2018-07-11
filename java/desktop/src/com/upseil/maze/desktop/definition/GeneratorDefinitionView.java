@@ -12,10 +12,8 @@ import java.util.logging.Logger;
 import org.reflections.Reflections;
 
 import com.upseil.maze.core.configuration.Configurable;
-import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.Maze;
-import com.upseil.maze.core.domain.factory.CellFactory;
-import com.upseil.maze.core.domain.factory.MazeFactory;
+import com.upseil.maze.core.domain.MazeFactory;
 import com.upseil.maze.core.generator.MazeGenerator;
 import com.upseil.maze.desktop.Launcher;
 import com.upseil.maze.desktop.controls.IntegerField;
@@ -89,15 +87,15 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     private void generateMaze() {
         if (!isValid()) return;
         
-        MazeGenerator<?, ?> generator = getGenerator();
+        MazeGenerator<Maze> generator = getGenerator();
         long start = System.currentTimeMillis();
-        Maze<?> maze = generator.generate(widthField.getValue(), heightField.getValue());
+        Maze maze = generator.generate(widthField.getValue(), heightField.getValue());
         long duration = System.currentTimeMillis() - start;
         logger.log(Level.FINE, "Generated maze in " + duration + "ms");
         this.fireEvent(new MazeGeneratedEvent(maze));
     }
     
-    private MazeGenerator<?, ?> getGenerator() {
+    private MazeGenerator<Maze> getGenerator() {
         Random random;
         if (seedField.isValid()) {
             random = new Random(seedField.getValue());
@@ -109,7 +107,7 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         }
         
         GeneratorDefinition definition = generatorSelector.getValue();
-        return definition.create(random, MazeFactory.Default, CellFactory.Default, mazeConfigurationView.createConfiguration());
+        return definition.create(random, MazeFactory.DefaultGridMaze, mazeConfigurationView.createConfiguration());
     }
     
     @FXML
@@ -125,8 +123,7 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     
     @FunctionalInterface
     private interface GeneratorFactory {
-        <M extends Maze<C>, C extends Cell> MazeGenerator<M, C> create(Random random, MazeFactory<M, C> mazeFactory,
-                                                                       CellFactory<C> cellFactory, Object configuration);
+        <M extends Maze> MazeGenerator<M> create(Random random, MazeFactory<M> mazeFactory, Object configuration);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -134,7 +131,7 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         
         public static Optional<GeneratorDefinition> createFor(Class<? extends MazeGenerator> type) {
             try {
-                Constructor<MazeGenerator> constructor = (Constructor<MazeGenerator>) type.getConstructor(Random.class, MazeFactory.class, CellFactory.class);
+                Constructor<MazeGenerator> constructor = (Constructor<MazeGenerator>) type.getConstructor(Random.class, MazeFactory.class);
                 Class configurationType = null;
                 if (Configurable.class.isAssignableFrom(type)) {
                     configurationType = type.getMethod("getConfiguration").getReturnType();
@@ -165,11 +162,10 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         }
 
         @Override
-        public <M extends Maze<C>, C extends Cell> MazeGenerator<M, C> create(Random random, MazeFactory<M, C> mazeFactory,
-                                                                              CellFactory<C> cellFactory, Object configuration) {
+        public <M extends Maze> MazeGenerator<M> create(Random random, MazeFactory<M> mazeFactory, Object configuration) {
             MazeGenerator generator = null;
             try {
-                generator = constructor.newInstance(random, mazeFactory, cellFactory);
+                generator = constructor.newInstance(random, mazeFactory);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 logger.log(Level.SEVERE, "Error invoking generator constructor", e);
             }

@@ -41,7 +41,7 @@ public class CanvasMazeView extends StackPane implements MazeView {
     }
 
     private void renderMaze() {
-        Maze<?> maze = getMaze();
+        Maze maze = getMaze();
         int mazeWidth = maze.getWidth();
         int mazeHeight = maze.getHeight();
         double cellScale = Math.floor(Math.min(getWidth() / mazeWidth, getHeight() / mazeHeight));
@@ -64,14 +64,14 @@ public class CanvasMazeView extends StackPane implements MazeView {
         });
     }
 
-    private final ObjectProperty<Maze<?>> mazeProperty = new SimpleObjectProperty<Maze<?>>(this, "maze") {
+    private final ObjectProperty<Maze> mazeProperty = new SimpleObjectProperty<Maze>(this, "maze") {
         @Override
         protected void invalidated() {
             renderMaze();
         }
     };
     @Override
-    public ObjectProperty<Maze<?>> mazeProperty() {
+    public ObjectProperty<Maze> mazeProperty() {
         return mazeProperty;
     }
     

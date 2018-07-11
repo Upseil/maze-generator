@@ -1,8 +1,6 @@
 package com.upseil.maze.core.modifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -17,25 +15,21 @@ import com.upseil.maze.core.domain.Cells;
 import com.upseil.maze.core.domain.Direction;
 import com.upseil.maze.core.domain.Maze;
 import com.upseil.maze.core.domain.Point;
-import com.upseil.maze.core.domain.factory.CellFactory;
 
-public class DeadEndStripper<M extends Maze<C>, C extends Cell> extends AbstractMazeModifier<M, C, DeadEndStripperConfiguration> {
+public class DeadEndStripper<M extends Maze> extends AbstractMazeModifier<M, DeadEndStripperConfiguration> {
     
     private static final String MarkerTypeSuffix = "_Marked";
     
     private final Random random;
-    private final Collection<Direction> directions;
     
-    public DeadEndStripper(Random random, CellFactory<C> cellFactory) {
-        super(cellFactory);
+    public DeadEndStripper(Random random) {
         this.random = random;
-        directions = Arrays.asList(Direction.North, Direction.East, Direction.South, Direction.West);
         setConfiguration(new DeadEndStripperConfiguration());
     }
 
     @Override
     public M modify(M maze) {
-        Context<C> context = createContext(maze);
+        Context context = createContext(maze);
         CellType searchType = getConfiguration().getSearchType();
         
         int index = 0;
@@ -43,10 +37,10 @@ public class DeadEndStripper<M extends Maze<C>, C extends Cell> extends Abstract
         while (!context.deadEnds.isEmpty()) {
             DeadEnd deadEnd = context.deadEnds.get(index);
             context.markedCells.add(maze.getCell(deadEnd.getX(), deadEnd.getY()));
-            maze.setCell(cellFactory.create(deadEnd.getX(), deadEnd.getY(), context.markerType));
+            maze.setCell(new Cell(deadEnd.getX(), deadEnd.getY(), context.markerType));
             
             Point next = deadEnd.getNeighbour();
-            Map<Direction, C> neighbours = maze.getNeighbours(next.getX(), next.getY(), directions, Cells.ofType(searchType));
+            Map<Direction, Cell> neighbours = maze.getNeighbours(next.getX(), next.getY(), Cells.ofType(searchType));
             if (neighbours.size() == 1) {
                 context.deadEnds.set(index, new DeadEnd(next, neighbours.keySet().iterator().next()));
                 index += increment;
@@ -62,9 +56,9 @@ public class DeadEndStripper<M extends Maze<C>, C extends Cell> extends Abstract
         CellType fillType = getConfiguration().getFillType();
         int threshold = (int) (context.markedCells.size() * getConfiguration().getPercentage());
         for (int i = 0; i < context.markedCells.size(); i++) {
-            C cell = context.markedCells.get(i);
+            Cell cell = context.markedCells.get(i);
             if (i < threshold) {
-                maze.setCell(cellFactory.create(cell.getX(), cell.getY(), fillType));
+                maze.setCell(new Cell(cell.getX(), cell.getY(), fillType));
             } else {
                 maze.setCell(cell);
             }
@@ -81,17 +75,17 @@ public class DeadEndStripper<M extends Maze<C>, C extends Cell> extends Abstract
         throw new IllegalStateException("Unknown strategy " + getConfiguration().getStrategy());
     }
 
-    private Context<C> createContext(M maze) {
+    private Context createContext(M maze) {
         List<DeadEnd> deadEnds = new ArrayList<>();
         Set<String> typeNames = new HashSet<>();
         CellType searchType = getConfiguration().getSearchType();
         int cellsAmount = 0;
-        for (C cell : maze) {
+        for (Cell cell : maze) {
             CellType type = cell.getType();
             typeNames.add(type.getName());
             if (type.equals(searchType)) {
                 cellsAmount++;
-                Map<Direction, C> neighbours = maze.getNeighbours(cell, directions, Cells.ofType(searchType));
+                Map<Direction, Cell> neighbours = maze.getNeighbours(cell, Cells.ofType(searchType));
                 if (neighbours.size() == 1) {
                     deadEnds.add(new DeadEnd(new Point(cell.getX(), cell.getY()), neighbours.keySet().iterator().next()));
                 }
@@ -109,14 +103,14 @@ public class DeadEndStripper<M extends Maze<C>, C extends Cell> extends Abstract
         }
         CellType markerType = new CellType(markerTypeName.toString());
         
-        return new Context<>(deadEnds, markerType, cellsAmount);
+        return new Context(deadEnds, markerType, cellsAmount);
     }
     
-    private static class Context<C extends Cell> {
+    private static class Context {
         
         private final List<DeadEnd> deadEnds;
         private final CellType markerType;
-        private final List<C> markedCells;
+        private final List<Cell> markedCells;
         
         public Context(List<DeadEnd> deadEnds, CellType markerType, int markedCellsCapacity) {
             this.deadEnds = deadEnds;

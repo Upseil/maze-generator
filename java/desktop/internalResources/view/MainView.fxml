@@ -13,8 +13,8 @@
   </left>
   
   <center>
-<!--     <GridPaneMazeView fx:id="mazeView" styleClass="maze-view" alignment="CENTER" /> -->
-    <CanvasMazeView fx:id="mazeView" styleClass="maze-view" />
+    <GridPaneMazeView fx:id="mazeView" styleClass="maze-view" alignment="CENTER" />
+<!--     <CanvasMazeView fx:id="mazeView" styleClass="maze-view" /> -->
 <!--     <ImageMazeView fx:id="mazeView" styleClass="maze-view" /> -->
   </center>
   

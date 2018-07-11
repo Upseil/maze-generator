@@ -7,10 +7,15 @@ public enum Direction {
     North(0, 1), East(1, 0), South(0, -1), West(-1, 0),
     NorthEast(1, 1), NorthWest(-1, 1), SouthEast(1, -1), SouthWest(-1, -1);
     
-    private static final Iterable<Direction> valuesIterable = Arrays.asList(values());
+    private static final Iterable<Direction> AllValuesIterable = Arrays.asList(North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest);
+    private static final Iterable<Direction> FullValuesIterable = Arrays.asList(North, East, South, West);
     
-    public static Iterable<Direction> iterable() {
-        return valuesIterable;
+    public static Iterable<Direction> allValues() {
+        return AllValuesIterable;
+    }
+    
+    public static Iterable<Direction> fullValues() {
+        return FullValuesIterable;
     }
     
     public static Direction getOpposite(Direction direction) {

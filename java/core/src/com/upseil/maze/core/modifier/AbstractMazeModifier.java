@@ -1,26 +1,19 @@
 package com.upseil.maze.core.modifier;
 
 import com.upseil.maze.core.configuration.Configurable;
-import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.Maze;
-import com.upseil.maze.core.domain.factory.CellFactory;
 
-public abstract class AbstractMazeModifier<M extends Maze<C>, C extends Cell, S> implements MazeModifier<M, C>, Configurable<S> {
+public abstract class AbstractMazeModifier<M extends Maze, C> implements MazeModifier<M>, Configurable<C> {
     
-    protected final CellFactory<C> cellFactory;
-    private S configuration;
-
-    public AbstractMazeModifier(CellFactory<C> cellFactory) {
-        this.cellFactory = cellFactory;
-    }
+    private C configuration;
     
     @Override
-    public S getConfiguration() {
+    public C getConfiguration() {
         return configuration;
     }
     
     @Override
-    public void setConfiguration(S configuration) {
+    public void setConfiguration(C configuration) {
         this.configuration = configuration;
     }
     

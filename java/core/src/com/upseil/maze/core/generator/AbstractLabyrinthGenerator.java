@@ -4,17 +4,15 @@ import java.util.Random;
 
 import com.upseil.maze.core.configuration.Configurable;
 import com.upseil.maze.core.configuration.LabyrinthConfiguration;
-import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.Maze;
-import com.upseil.maze.core.domain.factory.CellFactory;
-import com.upseil.maze.core.domain.factory.MazeFactory;
+import com.upseil.maze.core.domain.MazeFactory;
 
-public abstract class AbstractLabyrinthGenerator<M extends Maze<C>, C extends Cell> extends AbstractMazeGenerator<M, C> implements Configurable<LabyrinthConfiguration> {
+public abstract class AbstractLabyrinthGenerator<M extends Maze> extends AbstractMazeGenerator<M> implements Configurable<LabyrinthConfiguration> {
 
     private LabyrinthConfiguration configuration;
 
-    public AbstractLabyrinthGenerator(Random random, MazeFactory<M, C> mazeFactory, CellFactory<C> cellFactory) {
-        super(random, mazeFactory, cellFactory);
+    public AbstractLabyrinthGenerator(Random random, MazeFactory<M> mazeFactory) {
+        super(random, mazeFactory);
     }
 
     @Override

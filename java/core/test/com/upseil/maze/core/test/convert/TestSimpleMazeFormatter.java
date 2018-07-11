@@ -9,28 +9,27 @@ import org.junit.jupiter.api.Test;
 import com.upseil.maze.core.convert.SimpleMazeFormatter;
 import com.upseil.maze.core.domain.Cell;
 import com.upseil.maze.core.domain.CellType;
-import com.upseil.maze.core.domain.GenericMaze;
+import com.upseil.maze.core.domain.Direction;
+import com.upseil.maze.core.domain.GridMaze;
 import com.upseil.maze.core.domain.Maze;
-import com.upseil.maze.core.domain.SimpleCell;
-import com.upseil.maze.core.domain.factory.CellFactory;
 import com.upseil.maze.core.modifier.MazeFiller;
 
 class TestSimpleMazeFormatter {
     
-    private static final MazeFiller<Maze<Cell>, Cell> Filler = new MazeFiller<>(CellFactory.Default, CellType.Floor);
+    private static final MazeFiller<Maze> Filler = new MazeFiller<>(CellType.Floor);
     
     private SimpleMazeFormatter formatter;
-    private Maze<Cell> maze;
+    private Maze maze;
     
     @BeforeEach
     void initiliaze() {
         formatter = new SimpleMazeFormatter();
-        maze = Filler.modify(new GenericMaze<>(2, 2));
+        maze = Filler.modify(new GridMaze(2, 2, Direction.fullValues(), Maze.DefaultMapFactory));
     }
     
     @Test
     void testFormatSimpleMaze() {
-        maze.setCell(new SimpleCell(0, 0, CellType.Wall));
+        maze.setCell(new Cell(0, 0, CellType.Wall));
         
         String expectedString = "F F\nW F";
         assertThat(formatter.convert(maze), is(expectedString));
@@ -38,12 +37,12 @@ class TestSimpleMazeFormatter {
     
     @Test
     void testFormatMazeWithCustomCellType() {
-        maze.setCell(new SimpleCell(0, 0, new CellType("Floor2")));
+        maze.setCell(new Cell(0, 0, new CellType("Floor2")));
         
         String expectedString = "F F\nF F";
         assertThat(formatter.convert(maze), is(expectedString));
         
-        maze.setCell(new SimpleCell(0, 0, new CellType("Test")));
+        maze.setCell(new Cell(0, 0, new CellType("Test")));
         expectedString = "F F\nT F";
         assertThat(formatter.convert(maze), is(expectedString));
     }
@@ -55,7 +54,7 @@ class TestSimpleMazeFormatter {
         String expectedString = "F F\n  F";
         assertThat(formatter.convert(maze), is(expectedString));
         
-        maze.setCell(new SimpleCell(0, 0, new CellType("Test")));
+        maze.setCell(new Cell(0, 0, new CellType("Test")));
         expectedString = "F F\nT F";
         assertThat(formatter.convert(maze), is(expectedString));
     }

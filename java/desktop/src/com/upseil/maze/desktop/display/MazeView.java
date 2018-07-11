@@ -8,13 +8,13 @@ public interface MazeView {
     
     final String DefaultStyle = "style/maze/default.css";
     
-    ObjectProperty<Maze<?>> mazeProperty();
+    ObjectProperty<Maze> mazeProperty();
     
-    default void setMaze(Maze<?> maze) {
+    default void setMaze(Maze maze) {
         mazeProperty().set(maze);
     }
     
-    default Maze<?> getMaze() {
+    default Maze getMaze() {
         return mazeProperty().get();
     }
     
