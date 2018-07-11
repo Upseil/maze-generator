@@ -95,13 +95,15 @@ class TestDeadEndStripper {
     }
     
     @Test
-    void testDeadEndStrippingWithWeirdCellType() {
-        CellType weirdType = new CellType("Floor_Marked_ZZ");
+    void testDeadEndStrippingWithWeirdCellTypes() {
+        CellType crossType = CellType.Floor;
+        CellType fillType = new CellType("Floor_Marked");
         DeadEndStripper<Maze> deadEndStripper = new DeadEndStripper<>(new Random());
-        deadEndStripper.getConfiguration().setFillType(weirdType);
+        deadEndStripper.getConfiguration().setSearchType(crossType);
+        deadEndStripper.getConfiguration().setFillType(fillType);
         
-        Maze maze = deadEndStripper.modify(createCrossMaze(MazeSize, CellType.Floor, weirdType));
-        assertThat(maze, everyItem(hasProperty("type", equalTo(weirdType))));
+        Maze maze = deadEndStripper.modify(createCrossMaze(MazeSize, crossType, fillType));
+        assertThat(maze, everyItem(hasProperty("type", equalTo(fillType))));
     }
     
     @Test

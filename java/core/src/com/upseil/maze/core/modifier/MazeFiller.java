@@ -19,10 +19,6 @@ public class MazeFiller<M extends Maze> extends AbstractMazeModifier<M, MazeFill
 
     @Override
     public M modify(M maze) {
-        if (getConfiguration() == null) {
-            throw new IllegalStateException("No configuration has been given");
-        }
-        
         final CellType fillType = getConfiguration().getFillType();
         maze.forEachPoint((x, y) -> {
             if (maze.getCell(x, y) == null) {
