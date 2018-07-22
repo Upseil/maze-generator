@@ -24,7 +24,6 @@ import com.upseil.maze.core.solver.MazeSolver;
 public class PassageBreaker<M extends Maze> extends AbstractRandomizedMazeModifier<M, PassageBreakerConfiguration> {
     
     private static final Logger logger = Logger.getLogger(PassageBreaker.class.getName());
-    private static final Predicate<Cell> isWalkable = Cells.ofType(CellType.Floor);
     
     private final MazeSolver solver;
 
@@ -36,31 +35,21 @@ public class PassageBreaker<M extends Maze> extends AbstractRandomizedMazeModifi
 
     @Override
     public M modify(M maze) {
-        List<Candidate> candidates = new ArrayList<>();
-        Map<Direction, Cell> neighbours = new HashMap<>();
-        maze.forEach(Cells.ofType(CellType.Wall), cell -> {
-            neighbours.clear();
-            maze.getNeighbours(cell, Cells.ofType(CellType.Floor), neighbours);
-            if (neighbours.size() == 2) {
-                Iterator<Direction> iterator = neighbours.keySet().iterator();
-                Direction a = iterator.next();
-                Direction b = iterator.next();
-                if (a.getOpposite() == b) {
-                    candidates.add(new Candidate(new Point(cell.getX(), cell.getY()), neighbours.get(a), neighbours.get(b)));
-                }
-            }
-        });
-        Collections.shuffle(candidates, getRandom());
+        PassageBreakerConfiguration configuration = getConfiguration();
+        Predicate<Cell> isWalkable = Cells.ofType(configuration.getWalkableTypes());
+        List<Candidate> candidates = findCandidates(maze, configuration.getSearchType(), isWalkable);
+        int passageAmount = configuration.getAmount();
+        int minimumDistance = configuration.getMinimumShortcutDistance();
+        CellType passageType = configuration.getPassageType();
         
-        int passageAmount = getConfiguration().getAmount();
-        int minimumDistance = getConfiguration().getMinimumShortcutDistance();
         int count = 0;
         int index = 0;
+        List<Direction> path = new ArrayList<>();
         while ((passageAmount < 0 || count < passageAmount) && index < candidates.size()) {
             Candidate candidate = candidates.get(index);
-            List<Direction> path = solver.solve(maze, candidate.a, candidate.b, isWalkable);
-            if (path == null || path.size() >= minimumDistance) {
-                maze.setCell(new Cell(candidate.point.getX(), candidate.point.getY(), CellType.Floor));
+            solver.solve(maze, candidate.a, candidate.b, isWalkable, path);
+            if (path.size() >= minimumDistance) {
+                maze.setCell(new Cell(candidate.point.getX(), candidate.point.getY(), passageType));
                 count++;
             }
             index++;
@@ -71,6 +60,25 @@ public class PassageBreaker<M extends Maze> extends AbstractRandomizedMazeModifi
         }
         
         return maze;
+    }
+
+    private List<Candidate> findCandidates(M maze, CellType searchType, Predicate<Cell> isWalkable) {
+        List<Candidate> candidates = new ArrayList<>();
+        Map<Direction, Cell> neighbours = new HashMap<>();
+        maze.forEach(Cells.ofType(searchType), cell -> {
+            neighbours.clear();
+            maze.getNeighbours(cell, isWalkable, neighbours);
+            if (neighbours.size() == 2) {
+                Iterator<Direction> iterator = neighbours.keySet().iterator();
+                Direction a = iterator.next();
+                Direction b = iterator.next();
+                if (a.getOpposite() == b) {
+                    candidates.add(new Candidate(new Point(cell.getX(), cell.getY()), neighbours.get(a), neighbours.get(b)));
+                }
+            }
+        });
+        Collections.shuffle(candidates, getRandom());
+        return candidates;
     }
     
     private static class Candidate {

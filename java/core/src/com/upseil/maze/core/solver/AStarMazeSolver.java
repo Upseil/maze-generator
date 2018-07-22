@@ -15,7 +15,7 @@ import com.upseil.maze.core.domain.Point;
 public class AStarMazeSolver implements MazeSolver {
     
     @Override
-    public List<Direction> solve(Maze maze, int fromX, int fromY, int toX, int toY, Predicate<Cell> isWalkable) {
+    public List<Direction> solve(Maze maze, int fromX, int fromY, int toX, int toY, Predicate<Cell> isWalkable, List<Direction> result) {
         Point from = new Point(fromX, fromY);
         Point to = new Point(toX, toY);
         
@@ -50,7 +50,7 @@ public class AStarMazeSolver implements MazeSolver {
             openNodes.sort(null);
         } while (!openNodes.isEmpty());
         
-        return finalNode == null ? null : buildPath(finalNode);
+        return finalNode == null ? result : buildPath(finalNode, result);
     }
     
     private int indexOf(List<Node> openNodes, Point point) {
@@ -62,15 +62,20 @@ public class AStarMazeSolver implements MazeSolver {
         return -1;
     }
 
-    private List<Direction> buildPath(Node node) {
-        List<Direction> path = new ArrayList<>(node.cost);
+    private List<Direction> buildPath(Node node, List<Direction> result) {
+        if (result == null) {
+            result = new ArrayList<>();
+        } else {
+            result.clear();
+        }
+        
         Node currentNode = node;
         while (currentNode.predecessor != null) {
-            path.add(currentNode.direction);
+            result.add(currentNode.direction);
             currentNode = currentNode.predecessor;
         }
-        Collections.reverse(path);
-        return path;
+        Collections.reverse(result);
+        return result;
     }
 
     private static class Node implements Comparable<Node> {
