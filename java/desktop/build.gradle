@@ -18,7 +18,6 @@ dependencies {
 	compile "org.reflections:reflections:$reflectionsTarget"
 
     testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
-    
     testCompile "org.junit.jupiter:junit-jupiter-api:$junitTarget"
     testCompile "org.junit.platform:junit-platform-runner:$junitPlatformTarget"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitTarget"

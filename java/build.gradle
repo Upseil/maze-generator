@@ -7,6 +7,7 @@ ext {
 	javaTarget = '1.8'
 	javaFXGradleTarget = '8.8.2'
 	
+	gsonTarget = '2.8.5'
     jacksonTarget = '2.8.8'
 	
     junitTarget = '5.2.0'

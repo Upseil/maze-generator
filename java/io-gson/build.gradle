@@ -1,10 +1,15 @@
-// Core - Maze Generator
+// Gson - IO - Maze Generator
 
 dependencies {
+	compile project(":core")
+	compile "com.google.code.gson:gson:$gsonTarget"
+
     testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
     testCompile "org.junit.jupiter:junit-jupiter-api:$junitTarget"
     testCompile "org.junit.platform:junit-platform-runner:$junitPlatformTarget"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitTarget"
 }
 
-eclipse.project.name = workingTitle + '-Core'
+eclipse {
+    project.name = workingTitle + '-IO-Gson'
+}

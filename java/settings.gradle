@@ -2,3 +2,4 @@ rootProject.name = 'maze-generator'
 
 include ":core"
 include ":desktop"
+include ":io-gson"
