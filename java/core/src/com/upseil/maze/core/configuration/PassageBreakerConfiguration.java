@@ -5,13 +5,20 @@ import java.util.Objects;
 
 import com.upseil.maze.core.domain.CellType;
 
-public class PassageBreakerConfiguration {
+public class PassageBreakerConfiguration implements ModifierConfiguration {
+    
+    public static final String Type = "PassageBreaker";
     
     private int amount = -1;
     private int minimumShortcutDistance = 0;
     private CellType searchType = CellType.Wall;
     private CellType passageType = CellType.Floor;
     private Iterable<CellType> walkableTypes = Collections.singleton(CellType.Floor);
+    
+    @Override
+    public String getType() {
+        return Type;
+    }
     
     public int getAmount() {
         return amount;

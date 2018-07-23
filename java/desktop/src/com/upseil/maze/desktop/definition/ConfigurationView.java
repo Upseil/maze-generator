@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.upseil.maze.core.configuration.Configuration;
 import com.upseil.maze.desktop.Launcher;
 import com.upseil.maze.desktop.util.Validatable;
 
@@ -32,7 +33,7 @@ public class ConfigurationView extends GridPane implements Validatable {
     private final ResourceBundle resources;
     private final BooleanProperty validProperty;
     
-    private Class<?> currentType;
+    private Class<? extends Configuration> currentType;
     private final Map<String, PropertyView> properties; 
     
     public ConfigurationView() {
@@ -41,7 +42,7 @@ public class ConfigurationView extends GridPane implements Validatable {
         properties = new HashMap<>();
     }
 
-    public void setType(Class<?> configurationType) {
+    public void setType(Class<? extends Configuration> configurationType) {
         if (currentType != configurationType) {
             validProperty.unbind();
             currentType = null;
@@ -98,12 +99,12 @@ public class ConfigurationView extends GridPane implements Validatable {
         return new UnknownProperty(property);
     }
     
-    public Object createConfiguration() {
+    public Configuration createConfiguration() {
         if (currentType == null) {
             return null;
         }
         
-        Object configuration = null;
+        Configuration configuration = null;
         try {
             configuration = currentType.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

@@ -2,9 +2,10 @@ package com.upseil.maze.core.modifier;
 
 import java.util.Random;
 
+import com.upseil.maze.core.configuration.ModifierConfiguration;
 import com.upseil.maze.core.domain.Maze;
 
-public abstract class AbstractRandomizedMazeModifier<M extends Maze, C> extends AbstractMazeModifier<M, C> {
+public abstract class AbstractRandomizedMazeModifier<M extends Maze, C extends ModifierConfiguration> extends AbstractMazeModifier<M, C> {
     
     private final Random random;
 

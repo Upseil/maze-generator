@@ -3,6 +3,8 @@ package com.upseil.maze.desktop.definition;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -12,8 +14,10 @@ import java.util.logging.Logger;
 import org.reflections.Reflections;
 
 import com.upseil.maze.core.configuration.Configurable;
+import com.upseil.maze.core.configuration.Configuration;
 import com.upseil.maze.core.domain.Maze;
 import com.upseil.maze.core.domain.MazeFactory;
+import com.upseil.maze.core.generator.AbstractMazeGenerator;
 import com.upseil.maze.core.generator.MazeGenerator;
 import com.upseil.maze.desktop.Launcher;
 import com.upseil.maze.desktop.controls.IntegerField;
@@ -53,7 +57,7 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     @FXML
     private void initialize() {
         generatorSelector.valueProperty().addListener((o, oV, nV) -> {
-            Class<?> configurationType = nV.getConfigurationType();
+            Class<? extends Configuration> configurationType = nV.getConfigurationType();
             boolean configurable = configurationType != null;
             
             mazeConfigurationContainer.setVisible(configurable);
@@ -65,7 +69,7 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
         });
         
         Reflections reflections = new Reflections("com.upseil.maze");
-        for (@SuppressWarnings("rawtypes") Class<? extends MazeGenerator> type : reflections.getSubTypesOf(MazeGenerator.class)) {
+        for (@SuppressWarnings("rawtypes") Class<? extends AbstractMazeGenerator> type : reflections.getSubTypesOf(AbstractMazeGenerator.class)) {
             if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
                 GeneratorDefinition.createFor(type).ifPresent(d -> generatorSelector.getItems().add(d));
             }
@@ -123,31 +127,45 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
     
     @FunctionalInterface
     private interface GeneratorFactory {
-        <M extends Maze> MazeGenerator<M> create(Random random, MazeFactory<M> mazeFactory, Object configuration);
+        <M extends Maze> MazeGenerator<M> create(Random random, MazeFactory<M> mazeFactory, Configuration configuration);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static class GeneratorDefinition implements GeneratorFactory {
         
-        public static Optional<GeneratorDefinition> createFor(Class<? extends MazeGenerator> type) {
+        public static Optional<GeneratorDefinition> createFor(Class<? extends AbstractMazeGenerator> type) {
             try {
                 Constructor<MazeGenerator> constructor = (Constructor<MazeGenerator>) type.getConstructor(Random.class, MazeFactory.class);
-                Class configurationType = null;
-                if (Configurable.class.isAssignableFrom(type)) {
-                    configurationType = type.getMethod("getConfiguration").getReturnType();
-                }
+                Class configurationType = getConfigurationType(type);
                 return Optional.of(new GeneratorDefinition(type, constructor, configurationType));
             } catch (NoSuchMethodException | SecurityException e) {
                 logger.log(Level.SEVERE, "Error creating the generator definition", e);
                 return Optional.empty();
             }
         }
+
+        private static Class getConfigurationType(Class<? extends AbstractMazeGenerator> type) {
+            Class clazz = type;
+            while (!clazz.getSuperclass().equals(AbstractMazeGenerator.class)) {
+                clazz = clazz.getSuperclass();
+            }
+
+            Class configurationType = null;
+            Type[] genericTypes = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
+            for (Type genericType : genericTypes) {
+                if (genericType instanceof Class && Configuration.class.isAssignableFrom((Class) genericType)) {
+                    configurationType = (Class) genericType;
+                    break;
+                }
+            }
+            return configurationType;
+        }
         
         private final Class<? extends MazeGenerator> type;
         private final Constructor<MazeGenerator> constructor;
-        private final Class configurationType;
+        private final Class<? extends Configuration> configurationType;
 
-        public GeneratorDefinition(Class<? extends MazeGenerator> type, Constructor<MazeGenerator> constructor, Class configurationType) {
+        public GeneratorDefinition(Class<? extends MazeGenerator> type, Constructor<MazeGenerator> constructor, Class<? extends Configuration> configurationType) {
             this.type = type;
             this.constructor = constructor;
             this.configurationType = configurationType;
@@ -157,12 +175,12 @@ public class GeneratorDefinitionView extends VBox implements Validatable {
             return type.getSimpleName();
         }
         
-        public Class<?> getConfigurationType() {
+        public Class<? extends Configuration> getConfigurationType() {
             return configurationType;
         }
 
         @Override
-        public <M extends Maze> MazeGenerator<M> create(Random random, MazeFactory<M> mazeFactory, Object configuration) {
+        public <M extends Maze> MazeGenerator<M> create(Random random, MazeFactory<M> mazeFactory, Configuration configuration) {
             MazeGenerator generator = null;
             try {
                 generator = constructor.newInstance(random, mazeFactory);

@@ -4,7 +4,9 @@ import java.util.Objects;
 
 import com.upseil.maze.core.domain.CellType;
 
-public class DeadEndStripperConfiguration {
+public class DeadEndStripperConfiguration implements ModifierConfiguration {
+    
+    public static final String Type = "DeadEndStripper";
     
     public enum Strategy { BreadthFirst, DepthFirst }
     
@@ -12,6 +14,11 @@ public class DeadEndStripperConfiguration {
     private CellType searchType = CellType.Floor;
     private CellType fillType = CellType.Wall;
     private double percentage = 1;
+    
+    @Override
+    public String getType() {
+        return Type;
+    }
     
     public Strategy getStrategy() {
         return strategy;
