@@ -4,6 +4,7 @@ dependencies {
 	compile project(":core")
 	compile "com.google.code.gson:gson:$gsonTarget"
 
+    testCompile "org.reflections:reflections:$reflectionsTarget"
     testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
     testCompile "org.junit.jupiter:junit-jupiter-api:$junitTarget"
     testCompile "org.junit.platform:junit-platform-runner:$junitPlatformTarget"

@@ -9,6 +9,7 @@ ext {
 	
 	gsonTarget = '2.8.5'
     jacksonTarget = '2.8.8'
+    reflectionsTarget = '0.9.11'
 	
     junitTarget = '5.2.0'
     junitPlatformTarget = '1.2.0'

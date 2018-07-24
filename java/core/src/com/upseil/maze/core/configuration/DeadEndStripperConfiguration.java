@@ -59,5 +59,52 @@ public class DeadEndStripperConfiguration implements ModifierConfiguration {
             this.percentage = 0;
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getClass().getSimpleName()).append("[strategy=").append(strategy).append(", searchType=").append(searchType).append(", fillType=")
+                .append(fillType).append(", percentage=").append(percentage).append("]");
+        return builder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((fillType == null) ? 0 : fillType.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(percentage);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((searchType == null) ? 0 : searchType.hashCode());
+        result = prime * result + ((strategy == null) ? 0 : strategy.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DeadEndStripperConfiguration other = (DeadEndStripperConfiguration) obj;
+        if (fillType == null) {
+            if (other.fillType != null)
+                return false;
+        } else if (!fillType.equals(other.fillType))
+            return false;
+        if (Double.doubleToLongBits(percentage) != Double.doubleToLongBits(other.percentage))
+            return false;
+        if (searchType == null) {
+            if (other.searchType != null)
+                return false;
+        } else if (!searchType.equals(other.searchType))
+            return false;
+        if (strategy != other.strategy)
+            return false;
+        return true;
+    }
     
 }

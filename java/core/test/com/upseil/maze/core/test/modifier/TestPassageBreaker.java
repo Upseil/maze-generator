@@ -12,6 +12,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -99,7 +100,7 @@ class TestPassageBreaker {
         PassageBreakerConfiguration configuration = passageBreaker.getConfiguration();
         configuration.setMinimumShortcutDistance(minimumDistance);
         configuration.setPassageType(passageType);
-        configuration.setWalkableTypes(Arrays.asList(CellType.Floor, passageType));
+        configuration.setWalkableTypes(new HashSet<>(Arrays.asList(CellType.Floor, passageType)));
 
         Random generatorRandom = new Random();
         long generatorSeed = generatorRandom.nextLong();
